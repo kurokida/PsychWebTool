@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jspsych.js"></script>
+    <script type="text/javascript" src="pwt.js"></script>
+<title>ページのタイトル</title>
+<style type="text/css">
+body {
+  margin: 0;
+  padding: 0;
+  /* cursor: none; */
+}
+#mainCanvas {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+#circleID {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+}
+</style>
+<script type="text/javascript">
+
+onload = function() {
+    document.addEventListener("keyup" , keyUpFunc);
+    document.addEventListener("keydown" , keyDownFunc);
+    document.addEventListener("mousedown" , mouseDownFunc);
+    document.addEventListener("mouseup" , mouseUpFunc);
+    document.addEventListener("mousemove" , mouseMoveFunc);
+    
+    runExp();
+}
+
+async function runExp() {
+     myCanvas = document.getElementById('mainCanvas');
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("本ページの閲覧はHTML5対応ブラウザで行ってください");
+        return false;
+    }
+
+    // canvasの幅と高さ、中心座標
+    myCanvas.width = window.innerWidth;
+    myCanvas.height = window.innerHeight;
+
+    centerX = myCanvas.width / 2;
+    centerY = myCanvas.height / 2;
+    
+    ctx = myCanvas.getContext('2d');
+
+    bgColor = "rgb(128, 128, 128)";
+    stimColor = "rgb(255, 255, 255)";
+
+    // images = [
+    //     'img/long_1.png',
+    //     'img/long_2.png',
+    //     'img/long_3.png',
+    //     'img/long_1.png',
+    //     'img/long_2.png',
+    //     'img/long_3.png',
+    // ];
+
+    images = [
+        'img/long_1.png',
+        'img/long_2.png',
+        'img/long_3.png',
+        'img/long_6.png',
+        'img/long_9.png',
+        'img/longmae_1.png',
+        'img/longmae_2.png',
+        'img/longmae_3.png',
+        'img/longmae_6.png',
+        'img/longmae_9.png',
+        'img/short_1.png',
+        'img/short_2.png',
+        'img/short_3.png',
+        'img/short_6.png',
+        'img/short_9.png',
+        'img/shortmae_1.png',
+        'img/shortmae_2.png',
+        'img/shortmae_3.png',
+        'img/shortmae_6.png',
+        'img/shortmae_9.png'];
+
+    randImages = randomization(images, 1);
+
+    loaded = [];
+    for (i = 0; i < randImages.length; i++) {
+        loaded[i] = await loadImage(randImages[i]);
+    }    
+
+    clearWindow(ctx, bgColor);
+    ctx.font = "bold 22px 'ＭＳ Ｐゴシック'";
+    drawText(ctx, 'スペースキーを押してください。', centerX, centerY, stimColor);
+    await keyDownCheck([" "]);
+
+    timeArray = [];
+    cnt = 0;
+    frameCnt = 0;
+    zoom = 0.7; // 画像の拡大縮小率
+
+    start = null;
+    interval = 10; // 刺激を呈示するフレーム数
+
+    function step(timestamp) {
+        if (!start) {
+            start = timestamp;
+        } else {
+            timeArray[cnt] = timestamp - prevTime;
+            cnt++;
+        }
+
+        prevTime = timestamp;
+        //progress = timestamp - start;
+        
+        imgNum = Math.floor(frameCnt/interval);
+        
+        if (imgNum < randImages.length) {
+            if (frameCnt % interval == 0){
+                showImage(ctx, loaded[imgNum], centerX, centerY, zoom);
+            }
+            window.requestAnimationFrame(step);
+        } else {
+            clearWindow(ctx, bgColor);
+            drawText(ctx, 'スペースキーを押してください。', centerX, centerY, stimColor);
+            keyLock = false;
+            mouseLock = false;
+        }
+
+        frameCnt++;
+        
+    }
+
+    keyLock = true; // アニメーションが終わるまでキーの入力を受け付けない。
+    mouseLock = true; // アニメーションが終わるまでマウスの入力を受け付けない。
+
+    window.requestAnimationFrame(step); 
+
+    await keyDownCheck([" "]);
+    //await mouseDownCheck();
+    console.log(timeArray);
+    clearWindow(ctx, bgColor);
+    drawText(ctx, 'おわり', centerX, centerY, stimColor);
+    
+}
+
+</script>
+</head>
+<body>
+    <!--
+        <audio id="id0"><source src="a.m4a"><source src="a.ogg"></audio>
+        -->
+    <!-- <canvas id="mainCanvas" width="500" height="400"></canvas> -->
+    <canvas id="mainCanvas"></canvas> 
+    <canvas id="circleID"></canvas>
+</body>
+</html>

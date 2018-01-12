@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jspsych.js"></script>
+    <script type="text/javascript" src="pwt.js"></script>
+<title>ページのタイトル</title>
+<style type="text/css">
+body {
+  margin: 0;
+  padding: 0;
+  /* cursor: none; */
+}
+#mainCanvas {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+</style>
+<script type="text/javascript">
+
+//const canvasWidth = window.innerWidth;
+//const canvasHeight = window.innerHeight;
+
+onload = function() {
+    document.addEventListener("keyup" , KeyUpFunc);
+    document.addEventListener("keydown" , KeyDownFunc);
+    document.addEventListener("mousedown" , MouseDownFunc);
+    document.addEventListener("mousemove" , MouseMoveFunc);
+    
+    runExp();
+}
+
+async function runExp() {
+    const myCanvas = document.getElementById('mainCanvas');
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("本ページの閲覧はHTML5対応ブラウザで行ってください");
+        return false;
+    }
+
+    // canvasの幅と高さ、中心座標
+    myCanvas.width = window.innerWidth;
+    myCanvas.height = window.innerHeight;
+
+    const centerX = myCanvas.width / 2;
+    const centerY = myCanvas.height / 2;
+
+    const ctx = myCanvas.getContext('2d');
+
+    const bgColor = "rgb(76, 76, 76)";
+    const stimColor = "rgb(255, 255, 255)";
+
+    keyDownEvent = null; // keyDownEventがnullであることを確認したほうがいい。
+    while (true) {
+        ClearWindow(ctx, bgColor);
+        ctx.font = "bold 22px 'ＭＳ Ｐゴシック'";
+        DrawText(ctx, 'いずれかのキーを押してください。', centerX, centerY, stimColor);
+
+        if (keyDownEvent != null) {
+            if (keyDownEvent.key == 'Escape') {
+                break;
+            }
+
+            DrawText(ctx, keyDownEvent.key, centerX, centerY + 100, stimColor);
+            DrawText(ctx, 'keyPressed = ' + keyPressed, centerX, centerY + 150, stimColor);
+        }
+
+        await waitMsecs(1); // don't forget "await"!
+
+    }
+
+
+    ClearWindow(ctx, bgColor);
+
+    DrawText(ctx, '実験は終わりました。F5キーを押してください。', centerX, centerY, stimColor);
+
+}
+
+</script>
+</head>
+<body>
+    <!--
+        <audio id="id0"><source src="a.m4a"><source src="a.ogg"></audio>
+        -->
+    <!-- <canvas id="mainCanvas" width="500" height="400"></canvas> -->
+    <canvas id="mainCanvas"></canvas> 
+</body>
+</html>

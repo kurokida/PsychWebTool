@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jspsych.js"></script>
+    <script type="text/javascript" src="pwt.js"></script>
+<title>ページのタイトル</title>
+<style type="text/css">
+body {
+  margin: 0;
+  padding: 0;
+  /* cursor: none; */
+}
+#mainCanvas {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+#circleID {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+}
+</style>
+<script type="text/javascript">
+
+
+onload = function() {
+    document.addEventListener("keyup" , KeyUpFunc);
+    document.addEventListener("keydown" , KeyDownFunc);
+    document.addEventListener("mousedown" , MouseDownFunc);
+    document.addEventListener("mouseup" , MouseUpFunc);
+    document.addEventListener("mousemove" , MouseMoveFunc);
+    
+    runExp();
+}
+
+async function runExp() {
+    const myCanvas = document.getElementById('mainCanvas');
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("本ページの閲覧はHTML5対応ブラウザで行ってください");
+        return false;
+    }
+
+    // canvasの幅と高さ、中心座標
+    myCanvas.width = window.innerWidth;
+    myCanvas.height = window.innerHeight;
+
+    const centerX = myCanvas.width / 2;
+    const centerY = myCanvas.height / 2;
+    
+    const ctx = myCanvas.getContext('2d');
+
+    const bgColor = "rgb(76, 76, 76)";
+    const stimColor = "rgb(255, 255, 255)";
+
+    //const dist = 400; // 移動距離
+    const radius = 30;
+    //const startX = centerX - dist / 2;
+
+    // 回答円
+    //const radius = 14;
+    const circle = document.getElementById('circleID');
+    circle.width = radius * 2 + 50; // 円が切れずに表示されるように+50している。
+    circle.height = radius * 2 + 50;
+    const circleCtx = circle.getContext('2d');
+    circleCtx.clearRect(0, 0, circle.width, circle.height);
+    FillOval(circleCtx, circle.width / 2, circle.height / 2, radius, "rgb(0, 0, 255)");
+
+    ClearWindow(ctx, bgColor);
+    ctx.font = "bold 22px 'ＭＳ Ｐゴシック'";
+    DrawText(ctx, 'スペースキーを押してください。', centerX, centerY, stimColor);
+    const time1 = await keyDownCheck([" "]);
+
+    timeArray = [];
+    cnt = 0;
+
+    let start = null;
+    let dist = 0;
+    //startTime = GetMsecs();
+    //console.log(startTime);
+    v = 0.2;
+    duration = 2000;
+    
+    function step(timestamp) {
+        if (!start) {
+            start = timestamp;
+        } else {
+            timeArray[cnt] = timestamp - prevTime;
+            cnt++;
+        }
+
+        //prevTime = timestamp;
+        let progress = timestamp - start;
+        
+        dist = v * progress;
+
+        circle.style.left = Math.round(dist) + 'px';
+
+        if (progress < duration) {
+            window.requestAnimationFrame(step);
+        }
+    }
+
+    window.requestAnimationFrame(step); // await??
+
+    await waitMsecs(duration); // アニメーションの時間が分かるときはこうすればいい。
+
+    //console.log(timeArray);
+
+    ClearWindow(ctx, bgColor);
+    DrawText(ctx, 'おわり', centerX, centerY, stimColor);
+}
+
+</script>
+</head>
+<body>
+    <!--
+        <audio id="id0"><source src="a.m4a"><source src="a.ogg"></audio>
+        -->
+    <!-- <canvas id="mainCanvas" width="500" height="400"></canvas> -->
+    <canvas id="mainCanvas"></canvas> 
+    <canvas id="circleID"></canvas>
+</body>
+</html>
