@@ -1,7 +1,7 @@
 This page shows how to use PsychWebTool.
 
 # A template of a html file
-'''
+```
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -123,4 +123,4 @@ async function runExp() { // "async" is needed.
 </body>
 </html>
 
-'''
+```
