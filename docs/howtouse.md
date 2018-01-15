@@ -29,6 +29,7 @@ body {
 onload = function() {
     document.addEventListener("keyup", keyUpFunc);
     document.addEventListener("keydown", keyDownFunc);
+    document.addEventListener("mouseup", mouseUpFunc);
     document.addEventListener("mousedown", mouseDownFunc);
     document.addEventListener("mousemove", mouseMoveFunc);
     
@@ -53,8 +54,6 @@ async function runExp() { // "async" is needed.
         return false;
     }
 
-    participant = prompt('Please enter your name.');
-
     // Canvas fits the entire window
     myCanvas.width = window.innerWidth;
     myCanvas.height = window.innerHeight;
@@ -62,56 +61,10 @@ async function runExp() { // "async" is needed.
     centerX = myCanvas.width / 2;
     centerY = myCanvas.height / 2;
 
-    zoom = 0.7; // More than 1 expand an image, less than 1 downsize an image. 
-    
     ctx = myCanvas.getContext('2d');
 
     bgColor = "rgb(128, 128, 128)"; // Back ground color
     stimColor = "rgb(255, 255, 255)"; // Stimulus color
-
-    images = [
-        '../images/1.jpg',
-        '../images/2.jpg',
-        '../images/3.jpg',
-    ];
-
-    randImages = randomization(images, 3); // the second argument means the number of repetitions
-
-    for (i = 0; i < randImages.length; i++) {
-        testImage = await loadImage(randImages[i]);
-
-        clearWindow(ctx, bgColor);
-        ctx.font = "22px 'Arial'";
-        drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
-        await pressKey([" "]); // A space between double quotation is needed.
-
-        clearWindow(ctx, bgColor);
-        
-        // fixation cross
-        drawLine(ctx, centerX, centerY - 10, centerX, centerY + 10, 4, "rgb(0, 0, 0)"); // vertical line
-        drawLine(ctx, centerX - 10, centerY, centerX + 10, centerY, 4, "rgb(0, 0, 0)"); // horizontal line
-        await milliseconds(1000);
-
-        drawText(ctx, 'Please press a space key.', centerX, 100, stimColor);
-        startTime = showImage(ctx, testImage, centerX, centerY, zoom); // "showImage" function returns a time when the image appears in a display.
-        
-        await pressKey([" "]); // waiting for a key response (space key)
-        rt = keyDownEvent.timeStamp - startTime; // reaction time
-        
-        trial_data = {};
-		trial_data['participant'] = participant;
-		trial_data['trial'] = i + 1;
-        trial_data['imgFile'] = randImages[i];
-        trial_data['RT'] = rt;
-
-        writeData(trial_data);
-    }
-
-    clearWindow(ctx, bgColor);
-
-    saveCSV(participant);
-
-    drawText(ctx, 'The experiment has finished.', centerX, centerY, stimColor);
 
 }
 
