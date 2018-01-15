@@ -1,4 +1,4 @@
-This page shows how to use PsychWebTool.
+This is a tutorial to use PsychWebTool.
 
 # Download
 Please download all files from [GitHub.](https://github.com/kurokida/PsychWebTool){:target="_blank"}
@@ -6,7 +6,8 @@ Please download all files from [GitHub.](https://github.com/kurokida/PsychWebToo
 ![download](./images/download.png)
 
 # A template html file
-This is a template html file for almost all PsychWebTool (PWT) programs.
+This is a template html file for almost all PsychWebTool (PWT) programs. The template.html is located in the **demo** folder. You can get started by adding your original code to the file, and need not to know the content of the file in detail.
+
 ```
 <!DOCTYPE html>
 <html lang="ja">
@@ -71,6 +72,8 @@ async function runExp() { // "async" is needed.
 
     bgColor = "rgb(128, 128, 128)"; // Back ground color
     stimColor = "rgb(255, 255, 255)"; // Stimulus color
+
+    // Please write your code from here
 
 }
 
