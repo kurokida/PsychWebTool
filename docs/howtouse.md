@@ -1,6 +1,11 @@
 This page shows how to use PsychWebTool.
 
-# A template of a html file
+# Download
+Please download all files from GitHub.
+![download](./images/download.png)
+
+# A template html file
+This is a template html file for almost all PsychWebTool (PWT) programs.
 ```
 <!DOCTYPE html>
 <html lang="ja">
