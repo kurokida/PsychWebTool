@@ -1,7 +1,8 @@
 This page shows how to use PsychWebTool.
 
 # Download
-Please download all files from GitHub.
+Please download all files from [GitHub.](https://github.com/kurokida/PsychWebTool){:target="_blank"}
+
 ![download](./images/download.png)
 
 # A template html file
