@@ -79,19 +79,19 @@ async function runExp() { // "async" is needed.
         clearWindow(ctx, bgColor);
         ctx.font = "22px 'Arial'";
         drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
-        await keyDownCheck([" "]); // A space between double quotation is needed.
+        await pressKey([" "]); // A space between double quotation is needed.
 
         clearWindow(ctx, bgColor);
         
         // fixation cross
         drawLine(ctx, centerX, centerY - 10, centerX, centerY + 10, 4, "rgb(0, 0, 0)"); // vertical line
         drawLine(ctx, centerX - 10, centerY, centerX + 10, centerY, 4, "rgb(0, 0, 0)"); // horizontal line
-        await waitMsecs(1000);
+        await milliseconds(1000);
 
         drawText(ctx, 'Please press a space key.', centerX, 100, stimColor);
         startTime = showImage(ctx, testImage, centerX, centerY, zoom); // "showImage" function returns a time when the image appears in a display.
         
-        await keyDownCheck([" "]); // waiting for a key response (space key)
+        await pressKey([" "]); // waiting for a key response (space key)
         rt = keyDownEvent.timeStamp - startTime; // reaction time
         
         trial_data = {};
