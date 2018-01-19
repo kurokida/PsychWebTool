@@ -13,7 +13,7 @@
     <section class="page-header">
       <h1 class="project-name">{{ site.title | default: site.github.repository_name }}</h1>
       <h2 class="project-tagline">{{ site.description | default: site.github.project_tagline }}</h2>
-      <h3 class="top-page"><a href="/PsychWebTool/">Top page</a></h3>
+      <a href="/PsychWebTool/" class="btn">Top page</a>
       {% if site.github.is_project_page %}
         <a href="{{ site.github.repository_url }}" class="btn">View on GitHub</a>
       {% endif %}
@@ -27,7 +27,7 @@
       {{ content }}
 
       <footer class="site-footer">
-        <span class="top-page"><a href="/PsychWebTool/">Top page</a></span>
+        <span class="top-page">Go back to <a href="/PsychWebTool/">the top page</a></span>
         {% if site.github.is_project_page %}
           <span class="site-footer-owner"><a href="{{ site.github.repository_url }}">{{ site.github.repository_name }}</a> is maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a>.</span>
         {% endif %}
