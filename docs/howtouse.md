@@ -1,4 +1,4 @@
-This is the tutorial to use PsychWebTool.
+This is the tutorial to use PsychWebTool. This tutorial present a message, receive a key response and present a circle in your browser. Internet connection is not needed except for download, i.e. the program can run offline.
 
 # Download
 Please download all files from [GitHub.](https://github.com/kurokida/PsychWebTool){:target="_blank"}
@@ -87,15 +87,49 @@ async function runExp() { // "async" is needed.
 
 ```
 
-# Presentation of a message
+# Step 1: Set the HTML lang atribute
 
-## Step 1: Copy the template html file and paste it.
-You will find the template html file in the demo folder you downloaded. Please copy the file and paste it in the demo folder or in the new folder which must be made in the same location of the demo folder. Name the file pasted as you like.
+You will find the template html file in the demo folder you downloaded. Please copy the file and paste it in the same folder or in the new folder which must be made in the same location of the demo folder. Name the file pasted as you like.
 
-Open the file and add a next line immediately after the comment ** // Please write your original code from here **
+Open the file using a text editor your preferred. I preferred [Visual Studio Code](https://code.visualstudio.com/).
+
+Please change the HTML lang in accordance with your experiment. You will see language codes in [w3schools.com](https://www.w3schools.com/tags/ref_language_codes.asp).
 
 ```
+<html lang="ja">
+```
+
+## Step 2: Present a message
+
+Add the next line immediately after the comment * Please write your original code from here *.
+
+```
+// Please write your original code from here
 drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
 ```
 
-Please open the file using a modern web browser. Google Chrome or Firefox is recommended.
+Please open the file using a modern web browser, and you will see the message. Google Chrome or Firefox is recommended. 
+
+# Step 3: Receive a response
+
+Add the next line immediately after the * drawText * function.
+
+```
+await pressKey([" "]);
+```
+
+await is a very important keyword in PsychWebTool, please do not forget it. The space between double quotation is also important. pressKey([" "]) means waitng for the space key. If you are waiting for the "s" key, you can write as follows.
+
+```
+await pressKey(["s"]);
+```
+
+# Step 4: Present a circle
+
+Add the next line immediately after the * pressKey * function.
+
+```
+fillOval(ctx, centerX, centerY, 20, stimColor);
+```
+
+Please save and open the file. Please press the space key after the instruction, then you will see a circle.
