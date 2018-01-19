@@ -132,8 +132,10 @@ await pressKey(["s"]);
 Add the next line immediately after the *pressKey* function.
 
 ```
+clearWindow(ctx, bgColor); 
 fillOval(ctx, centerX, centerY, 20, stimColor);
 ```
-The above *fillOval* function present a circle of which radius is 20 at coordinates (centerX, centerY) with the color of stimColor.
+
+The *clearWindow* function deletes the instruction, and the *fillOval* function presents a circle of which radius is 20 at coordinates (centerX, centerY) with the color of stimColor.
 
 Please save and open the file. Please press the space key after the instruction, then you will see a circle.
