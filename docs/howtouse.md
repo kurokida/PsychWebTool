@@ -1,4 +1,4 @@
-This is a tutorial to use PsychWebTool.
+This is the tutorial to use PsychWebTool.
 
 # Download
 Please download all files from [GitHub.](https://github.com/kurokida/PsychWebTool){:target="_blank"}
@@ -73,7 +73,7 @@ async function runExp() { // "async" is needed.
     bgColor = "rgb(128, 128, 128)"; // Back ground color
     stimColor = "rgb(255, 255, 255)"; // Stimulus color
 
-    // Please write your code from here
+    // Please write your original code from here
 
 }
 
@@ -86,3 +86,16 @@ async function runExp() { // "async" is needed.
 </html>
 
 ```
+
+# Presentation of a message
+
+## Step 1: Copy the template html file and paste it.
+You will find the template html file in the demo folder you downloaded. Please copy the file and paste it in the demo folder or in the new folder which must be made in the same location of the demo folder. Name the file pasted as you like.
+
+Open the file and add a next line immediately after the comment ** // Please write your original code from here **
+
+```
+drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
+```
+
+Please open the file using a modern web browser. Google Chrome or Firefox is recommended.
