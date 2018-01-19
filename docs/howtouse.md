@@ -1,4 +1,4 @@
-This is the tutorial to use PsychWebTool. This tutorial present a message, receive a key response and present a circle in your browser. Internet connection is not needed except for download, i.e. the program can run offline.
+This is the tutorial to use PsychWebTool. This tutorial creates an demo program which present a message, receive a key response and present a circle in your browser. Internet connection is not needed except for download, i.e. the program can run offline.
 
 # Download
 Please download all files from [GitHub.](https://github.com/kurokida/PsychWebTool){:target="_blank"}
@@ -6,7 +6,7 @@ Please download all files from [GitHub.](https://github.com/kurokida/PsychWebToo
 ![download](./images/download.png)
 
 # A template html file
-This is a template html file for almost all PsychWebTool (PWT) programs. The template.html is located in the **demo** folder. You can get started by adding your original code to the file, and need not to know the content of the file in detail.
+This is a template html file for almost all PsychWebTool (PWT) programs. The template.html is located in the **demo** folder you downloaded. You can get started by adding your original code to the file, and need not to know the content of the file in detail.
 
 ```
 <!DOCTYPE html>
@@ -89,7 +89,7 @@ async function runExp() { // "async" is needed.
 
 # Step 1: Set the HTML lang atribute
 
-You will find the template html file in the demo folder you downloaded. Please copy the file and paste it in the same folder or in the new folder which must be made in the same location of the demo folder. Name the file pasted as you like.
+You will find the template html file in the demo folder you downloaded. Please copy the file and paste it in the same folder or in the new folder which must be made in the same location of the **demo** folder. Name the file as you like.
 
 Open the file using a text editor your preferred. I preferred [Visual Studio Code](https://code.visualstudio.com/).
 
@@ -99,26 +99,26 @@ Please change the HTML lang in accordance with your experiment. You will see lan
 <html lang="ja">
 ```
 
-## Step 2: Present a message
+# Step 2: Present a message
 
-Add the next line immediately after the comment * Please write your original code from here *.
+Add the next line immediately after the comment **"Please write your original code from here"**.
 
 ```
 // Please write your original code from here
-drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
+drawText(ctx, 'Please press the space key.', centerX, centerY, stimColor);
 ```
 
 Please open the file using a modern web browser, and you will see the message. Google Chrome or Firefox is recommended. 
 
 # Step 3: Receive a response
 
-Add the next line immediately after the * drawText * function.
+Add the next line immediately after the *drawText* function.
 
 ```
 await pressKey([" "]);
 ```
 
-await is a very important keyword in PsychWebTool, please do not forget it. The space between double quotation is also important. pressKey([" "]) means waitng for the space key. If you are waiting for the "s" key, you can write as follows.
+**_await_** is a very important keyword in PsychWebTool, please do not forget it. The space between double quotation is also important. pressKey([" "]) means waitng for the space key. If you are waiting for the "s" key, you should write as follows.
 
 ```
 await pressKey(["s"]);
@@ -126,10 +126,11 @@ await pressKey(["s"]);
 
 # Step 4: Present a circle
 
-Add the next line immediately after the * pressKey * function.
+Add the next line immediately after the *pressKey* function.
 
 ```
 fillOval(ctx, centerX, centerY, 20, stimColor);
 ```
+The above *fillOval* function present a circle of which radius is 20 at coordinates (centerX, centerY) with the color of stimColor.
 
 Please save and open the file. Please press the space key after the instruction, then you will see a circle.
