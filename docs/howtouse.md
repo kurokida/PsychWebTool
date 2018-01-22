@@ -1,4 +1,4 @@
-This is the tutorial to use PsychWebTool. This tutorial creates an demo program which present a message, receive a key response and present a circle in your browser. Internet connection is not needed except for download, i.e. the program can run offline.
+This is the tutorial to use PsychWebTool. This tutorial creates an demo program which present a message, receive a key response and present a circle in your browser. Internet connection is not needed except for download, i.e. the program can run not only online but also offline.
 
 # Download
 Please download all files from [GitHub.](https://github.com/kurokida/PsychWebTool){:target="_blank"}
@@ -121,7 +121,7 @@ Add the next line immediately after the *drawText* function.
 await pressKey([" "]);
 ```
 
-**_await_** is a very important keyword in PsychWebTool, please do not forget it. The space between double quotation is also important. pressKey([" "]) means waitng for the space key. If you are waiting for the "s" key, you should write as follows.
+**_await_** is a very important keyword in PsychWebTool, please do not forget it. The space between double quotation is also important. pressKey([" "]) means waiting for the space key. If you are waiting for the "s" key, you should write as follows.
 
 ```
 await pressKey(["s"]);
