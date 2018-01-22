@@ -1,6 +1,6 @@
-If you do not see [the basic tutorial page](tutorials/howtouse.md), please learn it at first.
+If you do not see [the basic tutorial page](howtouse.md), please learn it at first.
 
-Please copy and paste the template html file in the same folder or in the new folder which must be made in the same location of the demo folder.
+Please copy and paste the template html file in the demo folder or in the new folder which must be made in the same location of the demo folder.
 
 Add the next lines immediately after the comment “Please write your original code from here”.
 

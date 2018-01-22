@@ -45,13 +45,16 @@ onload = function() {
 
 // Please note that when you change the size of the window the program is initialized.
 resizeTimer = false;
+resizeFlag = true;
 onresize = function (){
-    if (resizeTimer !== false) {
-        clearTimeout(resizeTimer);
+    if (resizeFlag) {
+        if (resizeTimer !== false) {
+            clearTimeout(resizeTimer);
+        }
+        resizeTimer = setTimeout(function() {
+            location.reload();
+        }, 200);
     }
-    resizeTimer = setTimeout(function() {
-        location.reload();
-    }, 200);
 }
 
 async function runExp() { // "async" is needed.
@@ -76,7 +79,15 @@ async function runExp() { // "async" is needed.
     clearWindow(ctx, bgColor); // fill the window with bgColor
     ctx.font = "22px 'Arial'"; // font size and name
 
+    ////////////////////////////////////////////////
     // Please write your original code from here
+
+
+    ////////////////////////////////////////////////
+
+    clearWindow(ctx, bgColor);
+    drawText(ctx, 'The experiment finished.', centerX, centerY, stimColor);
+    resizeFlag = false;
 
 }
 
@@ -87,7 +98,6 @@ async function runExp() { // "async" is needed.
     <canvas id="circleID"></canvas> 
 </body>
 </html>
-
 ```
 
 # Step 1: Set the HTML lang atribute
