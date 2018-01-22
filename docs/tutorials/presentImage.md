@@ -13,5 +13,19 @@ showImage(ctx, testImage, centerX, centerY, zoom);
 
 You should call the *loadImage* function with **_await_** keyword per an image file for a precise presentation time. Be careful that the *loadImage* function takes time, so you should call it before the experimental timeline.
 
-Please refer to demo/imageRTKeyDemo.html.
+If you wait for a key response after presentation of a image, add the next line immediately after the *showImage* function. In this case, the image remains until the response.
+
+```
+await pressKey([" "]);
+```
+
+If you present a image for a certain amount of time, add the next lines immediately after the *showImage* function.
+
+```
+await milliseconds(1000);
+clearWindow(ctx, bgColor); // delete the image
+await pressKey([" "]);
+```
+
+Please refer to the demo/imageRTKeyDemo.html.
         
