@@ -5,8 +5,8 @@ The consept of the library resembles that of [jsPsych](http://www.jspsych.org/) 
 Please see [the tutorial page](howtouse.md) if you want to get started.
 
 - Tutorials
- - [The most basic sample code including downloading the library](howtouse.md)
- - [Presentation of a image file](presentImage.md)
+  - [The most basic sample code including downloading the library](howtouse.md)
+  - [Presentation of a image file](presentImage.md)
 
 - Functions
 
