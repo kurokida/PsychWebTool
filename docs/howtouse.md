@@ -129,7 +129,7 @@ await pressKey(["s"]);
 
 # Step 4: Present a circle
 
-Add the next line immediately after the *pressKey* function.
+Add the next two lines immediately after the *pressKey* function.
 
 ```
 clearWindow(ctx, bgColor); 
