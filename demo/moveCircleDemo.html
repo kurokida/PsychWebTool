@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jspsych.js"></script>
+    <script type="text/javascript" src="../js/pwt.js"></script>
+<title>Page title whatever you want</title>
+<style type="text/css">
+/* Please add your css here or in an external file */
+body {
+  margin: 0;
+  padding: 0;
+  /* cursor: none; */
+}
+#mainCanvas {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+#circleID {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2; /* Set the value larger than that of mainCanvas */
+}
+</style>
+<script type="text/javascript">
+
+onload = function() {
+    document.addEventListener("keyup", keyUpFunc);
+    document.addEventListener("keydown", keyDownFunc);
+    document.addEventListener("mouseup", mouseUpFunc);
+    document.addEventListener("mousedown", mouseDownFunc);
+    document.addEventListener("mousemove", mouseMoveFunc);
+    
+    runExp();
+}
+
+// Please note that when you change the size of the window the program is initialized.
+resizeTimer = false;
+resizeFlag = true;
+onresize = function (){
+    if (resizeFlag) {
+        if (resizeTimer !== false) {
+            clearTimeout(resizeTimer);
+        }
+        resizeTimer = setTimeout(function() {
+            location.reload();
+        }, 200);
+    }
+}
+
+async function runExp() { // "async" is needed.
+    myCanvas = document.getElementById('mainCanvas');
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("Your web browser does not meet the requirements for this program.");
+        return false;
+    }
+
+    // Canvas fits the entire window
+    myCanvas.width = window.innerWidth;
+    myCanvas.height = window.innerHeight;
+
+    centerX = myCanvas.width / 2;
+    centerY = myCanvas.height / 2;
+
+    ctx = myCanvas.getContext('2d');
+    ctx.font = "22px 'Arial'";
+
+    bgColor = "rgb(128, 128, 128)"; // Back ground color
+
+    // preparing an canvas for a circle
+    radius = 14;
+    circle = document.getElementById('circleID'); // Be sure to write <canvas id="circleID"></canvas> in the body element.
+    circle.width = radius * 2 + 50; // add an arbitrary number (here is 50) to prevent a circle from breaking.
+    circle.height = radius * 2 + 50; // add an arbitrary number (here is 50) to prevent a circle from breaking
+    circleCtx = circle.getContext('2d');
+    circleCtx.clearRect(0, 0, circle.width, circle.height);
+    fillOval(circleCtx, circle.width / 2, circle.height / 2, radius, "rgb(0, 0, 255)"); // draw a circle in the canvas
+    circle.style.visibility = "hidden";
+
+    // Instraction
+    clearWindow(ctx, bgColor);
+    drawText(ctx, 'When you click a left button a red circle appears at the position.', centerX, centerY - 50, "rgb(255, 255, 255)");
+    drawText(ctx, 'Right-click to finish. Press the space key to start', centerX, centerY + 50, "rgb(255, 255, 255)");
+    await pressKey([" "]);
+
+    clearWindow(ctx, bgColor);
+    circle.style.visibility = "visible"; // a circle appears
+
+    mouseDownEvent = null; // Initialize the mouseDownEvent
+    
+    while (true) {
+
+        if (mouseMoveEvent != null) {
+            circle.style.left = mouseMoveEvent.clientX - circle.width / 2 + 'px';
+            circle.style.top = mouseMoveEvent.clientY - circle.height / 2 + 'px';                                
+        }
+
+        if ((mouseDownEvent != null) && (mouseDownEvent.button == 0)) { // left-click
+            fillOval(ctx, mouseMoveEvent.clientX, mouseMoveEvent.clientY, radius, "rgb(255, 0, 0)");
+            mouseDownEvent = null;
+        }
+
+        if ((mouseDownEvent != null) && (mouseDownEvent.button == 2)) { // right-click
+            break;
+        }
+
+        await milliseconds(1); // This prevents a freeze.
+    };
+
+    clearWindow(ctx, bgColor);
+    circle.style.visibility = "hidden";
+    drawText(ctx, 'The demonstration finished', centerX, centerY, "rgb(255, 255, 255)");
+    resizeFlag = false;
+}
+
+</script>
+</head>
+<body onContextmenu="return false">
+    <canvas id="mainCanvas"></canvas>
+    <canvas id="circleID"></canvas>
+</body>
+</html>

@@ -17,6 +17,7 @@ If you wait for a key response after presentation of a image, add the next line 
 
 ```
 await pressKey([" "]);
+clearWindow(ctx, bgColor); // delete the image
 ```
 
 If you present a image for a certain amount of time, add the next lines immediately after the *showImage* function.

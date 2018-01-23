@@ -3,9 +3,9 @@ let keyUpEvent = null;
 let mouseDownEvent = null;
 let mouseUpEvent = null;
 let mouseMoveEvent = null;
-let keyPressed = false; // 現在、いずれかのキーが押されているかどうか
+let keyPressed = false; // This is true when any key is pressed
 let mouseClicked = false;
-let keyLock = false; // is it needed?
+let keyLock = false;
 let mouseLock = false;
 
 function keyDownFunc(e){
@@ -22,18 +22,12 @@ function keyUpFunc(e){
 
 function pressKey (array) {
     return new Promise(function(resolve){
-        keyDownEvent = null; // それまでのキー入力を無効に
+        keyDownEvent = null; // Initialize
         var id = setInterval(function(){
-            //if (!keyLock && !keyPressed && (keyDownEvent != null) && (array.indexOf(keyDownEvent.key) >= 0)) {
             if (!keyLock && !keyPressed && keyDownEvent && (array.indexOf(keyDownEvent.key) >= 0)) {
                 clearInterval(id);
-                //console.log("keyDownOK")
-                //console.log(typeof(keyDownEvent));
-                //console.log(keyDownEvent);
-                //resolve('keyDownCheck success!'); // resolveの引数が重要。もしくはresolve()
-                resolve(keyDownEvent.timeStamp); // resolveの引数が重要。もしくはresolve()
+                resolve(keyDownEvent.timeStamp); // to return the timestamp
             } else {
-                //keyFlag = true;
                 if (!keyPressed) {
                     keyDownEvent = null;
                 }
@@ -46,7 +40,6 @@ function mouseDownFunc(e){
     if (!mouseClicked) {
         mouseDownEvent = e;
         mouseClicked = true;
-        //console.log(mouseDownEvent.button)
     }
 }
 
@@ -61,16 +54,14 @@ function mouseMoveFunc(e){
 
 function clickMouse () {
     return new Promise(function(resolve){
-        mouseDownEvent = null; // それまでのキー入力を無効に
+        mouseDownEvent = null; // Initialize
         var id = setInterval(function(){
             if (!mouseLock && !mouseClicked && mouseDownEvent) {
                 clearInterval(id);
-                resolve(mouseDownEvent.timeStamp);
-                //console.log(mouseDownEvent.clientX);
-                //resolve('mouseDownCheck success!'); // resolveの引数が重要。もしくはresolve()
+                resolve(mouseDownEvent.timeStamp); // to return the timestamp
             } else {
                 if (!mouseClicked) {
-                    mouseDownEvent = null; // それまでのキー入力を無効に
+                    mouseDownEvent = null;
                 }
             }
         }, 1);
@@ -221,18 +212,11 @@ function drawImage(ctx, fileName, centerX, centerY, zoom) {
     if (arguments.length == 4 || arguments.length == 5) {
         const myZoom = (typeof zoom === 'undefined') ? 1 : zoom;
         const img = new Image();
-        //img.crossOrigin = "Anonymous";
         img.src = fileName;
-        //img.style.display = 'none';
         img.onload = function () {
             const tmpW = img.width * myZoom;
             const tmpH = img.height * myZoom;
-            //ctx.drawImage(img, centerX - img.width / 2, centerY - img.height / 2); 
             ctx.drawImage(img, 0, 0, img.width, img.height, centerX -tmpW / 2, centerY - tmpH / 2, tmpW, tmpH); 
-
-            //console.log(img.width);
-            //ctx.drawImage(img, x, y);
-            //ctx.drawImage(img, canvasWidth / 2 - img.width / 2, canvasHeight / 2 - img.height / 2); // 中央に呈示（x, yが指定されなかったら？　画面中心座標を指定してもいいかも）
         }
     } else {
         throw new Error("Please check the number of the arguments.");
@@ -245,15 +229,6 @@ function milliseconds(myTime) {
             //console.log('waitMsecs');
             resolve('waitMsecs success!')}, myTime)});
 }
-
-// function preloadImages(images) {
-//     return new Promise(function(resolve) {
-//         jsPsych.pluginAPI.preloadImages(images, function() {
-//             resolve('preloadImages success!');
-//             console.log('preload!');
-//         });        
-//     });
-// }
 
 function loadImage(fileName) {
     return new Promise(function(resolve) {

@@ -7,10 +7,13 @@ The consept of the library resembles that of [jsPsych](http://www.jspsych.org/) 
 - [Presentation of a image file](tutorials/presentImage.md)
 - Saving Data
 
+# Demonstration
+There are [some demonstration programs](demo.md) in the **demo** folder. These are usuful for understanding how to use PsychWebTool. 
+
 # Functions
 
 # About PsychWebTool
 
 PsychWebTool was created by Daiichiro Kuroki at Kyushu University in Japan. I am preparing submitting a paper regarding this library. Until acceptance of the paper, please cite the URL: http://pwt.hes.kyushu-u.ac.jp/ if you use PsychWebTool.
 
-You can use PsychWebTool free of charge, but the software is provided without warranty.
+You can use PsychWebTool free of charge, but the software is provided "as is" without warranty of any kind.

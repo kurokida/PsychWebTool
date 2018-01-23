@@ -19,13 +19,14 @@ body {
     z-index: 1;
 }
 </style>
+
 <script type="text/javascript">
 
-onload = function() {
-    document.addEventListener("keydown", keyDownFunc);
+onload = function() {    
     document.addEventListener("keyup", keyUpFunc);
-    document.addEventListener("mousedown", mouseDownFunc);
+    document.addEventListener("keydown", keyDownFunc);
     document.addEventListener("mouseup", mouseUpFunc);
+    document.addEventListener("mousedown", mouseDownFunc);    
     document.addEventListener("mousemove", mouseMoveFunc);
     
     runExp();
@@ -33,17 +34,20 @@ onload = function() {
 
 // Please note that when you change the size of the window the program is initialized.
 resizeTimer = false;
+resizeFlag = true;
 onresize = function (){
-    if (resizeTimer !== false) {
-        clearTimeout(resizeTimer);
+    if (resizeFlag) {
+        if (resizeTimer !== false) {
+            clearTimeout(resizeTimer);
+        }
+        resizeTimer = setTimeout(function() {
+            location.reload();
+        }, 200);
     }
-    resizeTimer = setTimeout(function() {
-        location.reload();
-    }, 200);
 }
 
 async function runExp() { // "async" is needed.
-    const myCanvas = document.getElementById('mainCanvas');
+    myCanvas = document.getElementById('mainCanvas');
     if (!myCanvas || !myCanvas.getContext) {
         alert("Your web browser does not meet the requirements for this program.");
         return false;
@@ -55,12 +59,12 @@ async function runExp() { // "async" is needed.
     myCanvas.width = window.innerWidth;
     myCanvas.height = window.innerHeight;
 
-    const centerX = myCanvas.width / 2;
-    const centerY = myCanvas.height / 2;
+    centerX = myCanvas.width / 2;
+    centerY = myCanvas.height / 2;
 
-    const zoom = 0.7; // More than 1 expand an image, less than 1 downsize an image. 
+    zoom = 0.7; // More than 1 expand an image, less than 1 downsize an image. 
     
-    const ctx = myCanvas.getContext('2d');
+    ctx = myCanvas.getContext('2d');
     
     bgColor = "rgb(128, 128, 128)"; // Back ground color
     stimColor = "rgb(255, 255, 255)"; // Stimulus color
@@ -71,33 +75,35 @@ async function runExp() { // "async" is needed.
         '../images/3.jpg',
     ];
 
-    const randImages = randomization(images, 3);
+    randImages = randomization(images, 2); // the second argument means the number of repetitions
 
-    for (let i = 0; i < randImages.length; i++) {
-        testImage = await loadImage(randImages[i]);
+    for (i = 0; i < randImages.length; i++) {
+        testImage = await loadImage(randImages[i]); // It takes time
 
+        // Instraction
         clearWindow(ctx, bgColor);
         ctx.font = "22px 'Arial'";
         drawText(ctx, 'Please click.', centerX, centerY, stimColor);
-        await mouseDownCheck();
-
-        clearWindow(ctx, bgColor);
+        await clickMouse();
 
         // fixation cross
+        clearWindow(ctx, bgColor); // delete the instraction
         drawLine(ctx, centerX, centerY - 10, centerX, centerY + 10, 4, "rgb(0, 0, 0)"); // vertical line
         drawLine(ctx, centerX - 10, centerY, centerX + 10, centerY, 4, "rgb(0, 0, 0)"); // horizontal line
-        await waitMsecs(1000);
+        await milliseconds(1000); // duration of the fixation cross
 
+        // present a image
+        clearWindow(ctx, bgColor);
         drawText(ctx, 'Please click.', centerX, 100, stimColor);
-        startTime = showImage(ctx, testImage, centerX, centerY, zoom); // "showImage" function returns a time when the image appears in a display.
+        startTime = showImage(ctx, testImage, centerX, centerY, zoom); // "showImage" function returns the time when the image appears in a display.
         
-        // 反応（クリック）待ち
-        await mouseDownCheck();
-        rt = mouseDownEvent.timeStamp - startTime;
+        await clickMouse(); // waiting for a mouse click
+        rt = mouseDownEvent.timeStamp - startTime; // reaction time
 
+        // storing the data
         trial_data = {};
 		trial_data['participant'] = participant;
-		trial_data['trial'] = i+1;
+		trial_data['trial'] = i + 1;
         trial_data['imgFile'] = randImages[i];
         trial_data['RT'] = rt;
 
@@ -108,7 +114,8 @@ async function runExp() { // "async" is needed.
 
     saveCSV(participant);
 
-    drawText(ctx, 'The experiment has finished.', centerX, centerY, stimColor);
+    drawText(ctx, 'The experiment finished.', centerX, centerY, stimColor);
+    resizeFlag = false;
 
 }
 
