@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jspsych.js"></script>
+    <script type="text/javascript" src="../js/pwt.js"></script>
+<title>Page title whatever you want</title>
+<style type="text/css">
+/* Please add your css here or in an external file */
+body {
+  margin: 0;
+  padding: 0;
+}
+#mainCanvas {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+</style>
+<script type="text/javascript">
+
+onload = function() {
+    document.addEventListener("keyup", keyUpFunc);
+    document.addEventListener("keydown", keyDownFunc);
+    document.addEventListener("mouseup", mouseUpFunc);
+    document.addEventListener("mousedown", mouseDownFunc);
+    document.addEventListener("mousemove", mouseMoveFunc);
+    
+    runExp();
+}
+
+// Please note that when you change the size of the window the program is initialized.
+resizeTimer = false;
+resizeFlag = true;
+onresize = function (){
+    if (resizeFlag) {
+        if (resizeTimer !== false) {
+            clearTimeout(resizeTimer);
+        }
+        resizeTimer = setTimeout(function() {
+            location.reload();
+        }, 200);
+    }
+}
+
+async function runExp() { // "async" is needed.
+    myCanvas = document.getElementById('mainCanvas');
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("Your web browser does not meet the requirements for this program.");
+        return false;
+    }
+
+    participant = prompt('Please enter your name.');
+
+    // Canvas fits the entire window
+    myCanvas.width = window.innerWidth;
+    myCanvas.height = window.innerHeight;
+
+    centerX = myCanvas.width / 2;
+    centerY = myCanvas.height / 2;
+
+    zoom = 0.7; // More than 1 expand an image, less than 1 downsize an image. 
+    
+    ctx = myCanvas.getContext('2d');
+
+    bgColor = "rgb(128, 128, 128)"; // Back ground color
+    stimColor = "rgb(255, 255, 255)"; // Stimulus color
+
+    expTable = [
+        ['../images/1.jpg', 'audio1'],
+        ['../images/1.jpg', 'audio2'],
+        ['../images/1.jpg', 'audio3'],
+        ['../images/2.jpg', 'audio1'],
+        ['../images/2.jpg', 'audio2'],
+        ['../images/2.jpg', 'audio3'],
+        ['../images/3.jpg', 'audio1'],
+        ['../images/3.jpg', 'audio2'],
+        ['../images/3.jpg', 'audio3'],
+    ]
+
+    randTable = randomization(expTable, 1);
+
+    for (i = 0; i < randTable.length; i++) {
+        testImage = await loadImage(randTable[i][0]);
+        
+        // Instraction
+        clearWindow(ctx, bgColor);
+        ctx.font = "22px 'Arial'";
+        drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
+        await pressKey([" "]);
+
+        // fixation cross
+        clearWindow(ctx, bgColor); // delete the instraction        
+        drawLine(ctx, centerX, centerY - 10, centerX, centerY + 10, 4, "rgb(0, 0, 0)"); // vertical line
+        drawLine(ctx, centerX - 10, centerY, centerX + 10, centerY, 4, "rgb(0, 0, 0)"); // horizontal line
+        await milliseconds(1000); // duration of the fixation cross
+
+        // present a image
+        clearWindow(ctx, bgColor);
+        showImage(ctx, testImage, centerX, centerY, zoom);
+
+        // play the sound around the same time of the presentation of a image
+        document.getElementById(randTable[i][1]).play();
+
+        await milliseconds(5000); // waiting for the sound to finish
+
+        clearWindow(ctx, bgColor);
+        drawText(ctx, 'Please press a left or right arrow key.', centerX, centerY, stimColor);
+        await pressKey(["ArrowLeft", "ArrowRight"]); // waiting for a key response
+        
+        // storing the data
+        trial_data = {};
+		trial_data['participant'] = participant;
+		trial_data['trial'] = i + 1;
+        trial_data['imgFile'] = randTable[i][0];
+        trial_data['sound'] = randTable[i][1];
+        trial_data['Key'] = keyDownEvent.key;
+
+        writeData(trial_data);
+    }
+
+    clearWindow(ctx, bgColor);
+
+    saveCSV(participant);
+
+    drawText(ctx, 'The experiment finished.', centerX, centerY, stimColor);
+    resizeFlag = false;
+
+}
+
+</script>
+</head>
+<body>
+    <canvas id="mainCanvas"></canvas> 
+    <canvas id="circleID"></canvas> 
+    <audio id="audio1" preload="auto"><source src="../sounds/sin1.wav" type="audio/wav"></audio>
+    <audio id="audio2" preload="auto"><source src="../sounds/sin2.wav" type="audio/wav"></audio>
+    <audio id="audio3" preload="auto"><source src="../sounds/sin3.wav" type="audio/wav"></audio>    
+</body>
+</html>

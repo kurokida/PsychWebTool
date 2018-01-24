@@ -11,7 +11,6 @@
 body {
   margin: 0;
   padding: 0;
-  /* cursor: none; */
 }
 #mainCanvas {
     position:absolute;
@@ -19,8 +18,15 @@ body {
     left: 0px;
     z-index: 1;
 }
+#circleID {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2; /* Set the value larger than that of mainCanvas */
+}
 </style>
 <script type="text/javascript">
+
 
 onload = function() {
     document.addEventListener("keyup", keyUpFunc);
@@ -66,56 +72,47 @@ async function runExp() { // "async" is needed.
     bgColor = "rgb(128, 128, 128)"; // Back ground color
     stimColor = "rgb(255, 255, 255)"; // Stimulus color
 
-    // These images are presented in a random order. Each image is presented in a very shor time.
-    images = [
-        '../images/1.jpg',
-        '../images/2.jpg',
-        '../images/3.jpg',
-        '../images/4.jpg',
-        '../images/5.jpg',
-        '../images/6.jpg',
-        '../images/7.jpg',
-        '../images/8.jpg',
-        '../images/9.jpg',
-        '../images/10.jpg'];
-
-    randImages = randomization(images, 1);
-
-    // load all images before the experimental timeline for a precise presentation time of stimuli
-    loaded = [];
-    for (i = 0; i < randImages.length; i++) {
-        loaded[i] = await loadImage(randImages[i]);
-    }    
+    // preparing an canvas for a circle
+    radius = 30;    
+    circle = document.getElementById('circleID'); // Be sure to write <canvas id="circleID"></canvas> in the body element.
+    circle.width = radius * 2 + 50; // add an arbitrary number (here is 50) to prevent a circle from breaking.
+    circle.height = radius * 2 + 50; // add an arbitrary number (here is 50) to prevent a circle from breaking.
+    circleCtx = circle.getContext('2d');
+    circleCtx.clearRect(0, 0, circle.width, circle.height);
+    fillOval(circleCtx, circle.width / 2, circle.height / 2, radius, "rgb(0, 0, 255)"); // draw a circle in the canvas
+    circle.style.visibility = "hidden";
 
     clearWindow(ctx, bgColor);
     drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
     await pressKey([" "]);
 
+    clearWindow(ctx, bgColor);
+    circle.style.visibility = "visible";
+
     timeArray = [];
     cnt = 0;
-    frameCnt = 0;
-    zoom = 0.7; // More than 1 expand an image, less than 1 downsize an image. 
-
     start = null;
-    interval = 10; // the number of frames during which an image is presented
+    dist = 0;
+    v = 100; // velocity (pixels per sec)
+    duration = 2000; // ms
 
     // Both keyLock and mouseLock are reserved words.
     keyLock = true; // keyboard is not available until given false
     mouseLock = true; // mouse is not available until given false
 
-    window.requestAnimationFrame(step); // start the RSVP
+    window.requestAnimationFrame(step); // start the motion
 
-    await pressKey([" "]); // to stop the execution of the program
+    await pressKey([" "]); //await milliseconds(duration); // is also a good way to stop the execution of the program
 
     // If you want to know the interval of the requestAnimationFrame methods, please uncomment the below line.
     // console.log(timeArray);
-    
+
     clearWindow(ctx, bgColor);
     drawText(ctx, 'Please reload the page.', centerX, centerY, stimColor);
     resizeFlag = false;
-    
 }
 
+// step is a callback function of the requestAnimationFrame method.
 function step(timestamp) {
     if (!start) {
         start = timestamp;
@@ -125,23 +122,21 @@ function step(timestamp) {
     }
 
     prevTime = timestamp;
+    elapsedTime = timestamp - start; // ms
     
-    imgNum = Math.floor(frameCnt/interval);
-    
-    if (imgNum < randImages.length) {
-        if (frameCnt % interval == 0){
-            showImage(ctx, loaded[imgNum], centerX, centerY, zoom);
-        }
+    dist = (v / 1000) * elapsedTime;
+
+    circle.style.left = Math.round(dist) + 'px'; // move the circle
+
+    if (elapsedTime < duration) { // The time when you want to stop the motion is depend on the condition.
         window.requestAnimationFrame(step);
     } else {
         clearWindow(ctx, bgColor);
+        circle.style.visibility = "hidden";
         drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
-        keyLock = false;
-        mouseLock = false;
+        keyLock = false; // keyboard will be available
+        mouseLock = false; // mouse will be available
     }
-
-    frameCnt++;
-    
 }
 
 </script>

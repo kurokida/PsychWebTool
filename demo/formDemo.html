@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jspsych.js"></script>
+    <script type="text/javascript" src="../js/pwt.js"></script>
+<title>Page title whatever you want</title>
+<style type="text/css">
+/* Please add your css here or in an external file */
+body {
+  margin: 0;
+  padding: 0;
+  /*cursor: none;*/
+}
+#mainCanvas {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    visibility: hidden;
+}
+#circleID {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+    visibility: hidden;
+}
+#mainForm {
+    margin: 50px 50px;
+}
+</style>
+<script type="text/javascript">
+
+var myCanvas, myForm, colVal, circle, stimShape, dist, interval, radius;
+
+onload = function() {
+    document.addEventListener("keydown" , keyDownFunc);
+    document.addEventListener("keyup" , keyUpFunc);
+    document.addEventListener("mousedown" , mouseDownFunc);
+    document.addEventListener("mouseup" , mouseUpFunc);
+    document.addEventListener("mousemove" , mouseMoveFunc);
+    
+    myCanvas = document.getElementById('mainCanvas');
+    myForm = document.getElementById('mainForm');
+    circle = document.getElementById('circleID');
+
+    //myCanvas.style.visibility = "hidden";
+    //runExp();
+}
+
+// Please note that when you change the size of the window the program is initialized.
+resizeTimer = false;
+resizeFlag = true;
+onresize = function (){
+    if (resizeFlag) {
+        if (resizeTimer !== false) {
+            clearTimeout(resizeTimer);
+        }
+        resizeTimer = setTimeout(function() {
+            location.reload();
+        }, 200);
+    }
+}
+
+async function runExp() { // "async" is needed.
+    myCanvas = document.getElementById('mainCanvas');
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("Your web browser does not meet the requirements for this program.");
+        return false;
+    }
+
+    participant = prompt('Please enter your name.');
+
+    // Canvas fits the entire window
+    myCanvas.width = window.innerWidth;
+    myCanvas.height = window.innerHeight;
+
+    centerX = myCanvas.width / 2;
+    centerY = myCanvas.height / 2;
+
+    ctx = myCanvas.getContext('2d');
+    
+    bgColor = "rgb(76, 76, 76)";
+    stimColor = "rgb(255, 255, 255)";
+
+
+    document.body.style.cursor = "auto";
+
+    document.body.style.cursor = "none";
+
+    // 凝視点
+    drawLine(ctx, centerX, centerY - 10, centerX, centerY + 10, 4, "rgb(0, 0, 0)");
+    drawLine(ctx, centerX - 10, centerY, centerX + 10, centerY, 4, "rgb(0, 0, 0)");
+    //await waitMsecs(1000);
+        
+    await milliseconds(1000);
+
+
+    clearWindow(ctx, bgColor);
+
+    drawText(ctx, '終わりです。お疲れさまでした。', centerX, centerY, stimColor);
+    document.body.style.cursor = "auto";
+
+}
+
+function hideForms(){
+    myForm.style.visibility = "hidden";
+    myCanvas.style.visibility = "visible";
+    colVal = $("[name=color]:checked").val();
+    stimShape = $("[name=shape]:checked").val();
+    dist = document.form1.dist.value;
+    interval = document.form1.interval.value;
+    radius = document.form1.radius.value;
+
+    runExp();
+}
+
+</script>
+</head>
+<body onContextmenu="return false">
+    <canvas id="mainCanvas"></canvas> 
+
+    <form id="mainForm" name="form1">
+        <p>
+            <input type="radio" name="sex" value="1" checked="checked">man
+            <input type="radio" name="sex" value="2">woman
+        </p>
+        <p>
+            <input type="radio" name="shape" value="1" checked="checked">円形
+            <input type="radio" name="shape" value="2">四角形
+        </p>
+        <p>
+            Name: <input type="text" name="radius" value="14">
+        </p>
+        <p>
+        ２点間の距離（ピクセル）<input type="text" name="dist" value="300">
+        </p>
+        <p>
+        時間の間隔（秒。小数もOK）<input type="text" name="interval" value="1">
+        </p>
+        <p>
+            <input type="button" value="Start" onclick="hideForms()">
+        </p>
+    </form>
+</body>
+</html>

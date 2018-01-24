@@ -21,4 +21,14 @@ This program presents a fixation cross for 1000 ms, then a image until the mouse
 
 Data is stored as a CSV file named as the text you entered in the text box. A Reaction time for an image is recorded.
 
+## soundImageDemo.html
+
+Experimental conditions of this demonstration is more complex than that of imageRTKeyDemo.html. There are three images and three sounds. The number of trials is 9 (3 x 3).
+
+When you open the file, you will see a small text box. Please enter your name or initial etc.
+
+This program presents a fixation cross for 1000 ms, then a image with a sound for 5 seconds. After the observation, press a left or right arrow key as a response.
+
+Data is stored as a CSV file named as the text you entered in the text box. A Reaction time for an image is recorded.
+
 ## keyDownEventDemo.html
