@@ -11,7 +11,6 @@
 body {
   margin: 0;
   padding: 0;
-  /*cursor: none;*/
 }
 #mainCanvas {
     position:absolute;
@@ -20,20 +19,11 @@ body {
     z-index: 1;
     visibility: hidden;
 }
-#circleID {
-    position:absolute;
-    top: 0px;
-    left: 0px;
-    z-index: 2;
-    visibility: hidden;
-}
 #mainForm {
     margin: 50px 50px;
 }
 </style>
 <script type="text/javascript">
-
-var myCanvas, myForm, colVal, circle, stimShape, dist, interval, radius;
 
 onload = function() {
     document.addEventListener("keydown" , keyDownFunc);
@@ -44,10 +34,6 @@ onload = function() {
     
     myCanvas = document.getElementById('mainCanvas');
     myForm = document.getElementById('mainForm');
-    circle = document.getElementById('circleID');
-
-    //myCanvas.style.visibility = "hidden";
-    //runExp();
 }
 
 // Please note that when you change the size of the window the program is initialized.
@@ -65,13 +51,11 @@ onresize = function (){
 }
 
 async function runExp() { // "async" is needed.
-    myCanvas = document.getElementById('mainCanvas');
+    //myCanvas = document.getElementById('mainCanvas');
     if (!myCanvas || !myCanvas.getContext) {
         alert("Your web browser does not meet the requirements for this program.");
         return false;
     }
-
-    participant = prompt('Please enter your name.');
 
     // Canvas fits the entire window
     myCanvas.width = window.innerWidth;
@@ -82,25 +66,35 @@ async function runExp() { // "async" is needed.
 
     ctx = myCanvas.getContext('2d');
     
-    bgColor = "rgb(76, 76, 76)";
-    stimColor = "rgb(255, 255, 255)";
+    bgColor = "rgb(128, 128, 128)"; // Back ground color
+    stimColor = "rgb(255, 255, 255)"; // Stimulus color
 
 
     document.body.style.cursor = "auto";
 
     document.body.style.cursor = "none";
 
-    // 凝視点
-    drawLine(ctx, centerX, centerY - 10, centerX, centerY + 10, 4, "rgb(0, 0, 0)");
-    drawLine(ctx, centerX - 10, centerY, centerX + 10, centerY, 4, "rgb(0, 0, 0)");
-    //await waitMsecs(1000);
-        
-    await milliseconds(1000);
+    // Instraction
+    clearWindow(ctx, bgColor);
+    ctx.font = "22px 'Arial'";
+    drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
+    await pressKey([" "]); // A space between double quotation is needed.
 
+    // Experiment code
+
+    // storing the data
+    trial_data = {};
+    trial_data['participant'] = myName;
+    trial_data['glasses'] = glassesVal;
+
+    writeData(trial_data);
 
     clearWindow(ctx, bgColor);
 
-    drawText(ctx, '終わりです。お疲れさまでした。', centerX, centerY, stimColor);
+    saveCSV(myName);
+
+    drawText(ctx, 'The experiment finished.', centerX, centerY, stimColor);
+    resizeFlag = false;
     document.body.style.cursor = "auto";
 
 }
@@ -108,11 +102,8 @@ async function runExp() { // "async" is needed.
 function hideForms(){
     myForm.style.visibility = "hidden";
     myCanvas.style.visibility = "visible";
-    colVal = $("[name=color]:checked").val();
-    stimShape = $("[name=shape]:checked").val();
-    dist = document.form1.dist.value;
-    interval = document.form1.interval.value;
-    radius = document.form1.radius.value;
+    glassesVal = $("[name=glasses]:checked").val();
+    myName = document.form1.myName.value;
 
     runExp();
 }
@@ -124,22 +115,13 @@ function hideForms(){
 
     <form id="mainForm" name="form1">
         <p>
-            <input type="radio" name="sex" value="1" checked="checked">man
-            <input type="radio" name="sex" value="2">woman
+            Name: <input type="text" name="myName" value="Please enter your name">
         </p>
-        <p>
-            <input type="radio" name="shape" value="1" checked="checked">円形
-            <input type="radio" name="shape" value="2">四角形
+        <p>Do you wear glasses? 
+            <input type="radio" name="glasses" value="1" checked="checked">Yes
+            <input type="radio" name="glasses" value="2">No
         </p>
-        <p>
-            Name: <input type="text" name="radius" value="14">
-        </p>
-        <p>
-        ２点間の距離（ピクセル）<input type="text" name="dist" value="300">
-        </p>
-        <p>
-        時間の間隔（秒。小数もOK）<input type="text" name="interval" value="1">
-        </p>
+        
         <p>
             <input type="button" value="Start" onclick="hideForms()">
         </p>
