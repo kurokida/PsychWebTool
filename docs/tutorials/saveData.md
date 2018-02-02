@@ -1,6 +1,6 @@
 The PsychWebTool includes jsPsych v.5.0.3 and uses a lots of functions of it. I greately appreciate [Josh de Leeuw](https://twitter.com/joshdeleeuw) works. The PsychWebTool provides three ways to save experimental data permanently. 
 
-## Save the data as an object per trial
+# Save the data as an object per trial
 
 This is a common procedures among the three saving ways.
 
@@ -30,19 +30,26 @@ In the end of the experiment, call the *saveCSV* function as follows. Please ref
 saveCSV(participant);
 ```
 
-The parameter of the saveCSV function (here is **participant**) is used as the name of the CSV file. The *saveCSV* function is the same as the *[jsPsych.data.localSave](https://github.com/jspsych/jsPsych/blob/v5.0.3/docs/markdown_docs/core_library/jspsych-data.md)* function. Note that the *saveCSV* function must be called **in the end of the experiment**.
+The parameter of the saveCSV function (here is **participant**) is used as the name of the CSV file. The *saveCSV* function is the same as the *[jsPsych.data.localSave](https://github.com/jspsych/jsPsych/blob/v5.0.3/docs/markdown_docs/core_library/jspsych-data.md#jspsychdatalocalsave)* function. Note that the *saveCSV* function must be called **in the end of the experiment**.
 
 # Saving data as a CSV file in a web server
 
 If you conduct web-based experiments, it is a good way to save the data in the web server. This way does not require a database server, but a CSV file is made per participant. So, it might be hard to analyze all the data from a lot of files.
 
-Please refer to the demos/save2serverDemo.html and the section: **Storing data permanently as a file** at [the jsPsych document](https://github.com/jspsych/jsPsych/blob/v5.0.3/docs/markdown_docs/features/data.md). 
+Please refer to the demos/save2serverDemo.html and the section: **Storing data permanently as a file** at [the jsPsych document](https://github.com/jspsych/jsPsych/blob/v5.0.3/docs/markdown_docs/features/data.md#storing-data-permanently-as-a-file). 
+
+Please use the php/save2server.php you downloaded. 
+
+Josh de Leeuw wrote at the above jsPsych document that 
+> The file_put_contents($filename, $data) method requires permission to write new files. An easy way to solve this is to create a directory on the server that will store the data and use the chmod command to give all users write permission (chmod 777) to that directory. In the above example, I append the directory data/ to the filename, and that directory is writable.
+
+So please make the php/data directory (folder) and change the permission of it to 777. All CSV files are stored in this directory. You can download all the files using a file transfer application.
 
 # Storing data to a database server
 
-This is a perfect way for web-based experiments, but a MySQL databsase server is needed. Please refer to the demos/databaseDemo.html and the section: **Storing data permanently in a MySQL database** at [the jsPsych document](https://github.com/jspsych/jsPsych/blob/v5.0.3/docs/markdown_docs/features/data.md). 
+This is a perfect way for web-based experiments, but a MySQL databsase server is needed. Please refer to the demos/databaseDemo.html and the section: **Storing data permanently in a MySQL database** at [the jsPsych document](https://github.com/jspsych/jsPsych/blob/v5.0.3/docs/markdown_docs/features/data.md#storing-data-permanently-in-a-mysql-database). 
 
-You will find the php/savedata.php you downloaded. 
+Please use the php/savedata.php you downloaded. 
 
 Josh de Leeuw wrote at the above jsPsych document that 
 > To use the above PHP script, you'll need to provide the credentials for your MySQL database. The PHP script is expecting the credentials to be stored in a separate PHP file called 'database_connect.php', located in the same directory as the PHP script. This file should look like:
