@@ -1,4 +1,4 @@
-The PsychWebTool includes jsPsych v.5.0.3 and provides three ways to save experimental data permanently. I greately appreciate [Josh de Leeuw](https://twitter.com/joshdeleeuw) works.
+The PsychWebTool includes jsPsych v.5.0.3 and uses a lots of functions of it. I greately appreciate [Josh de Leeuw](https://twitter.com/joshdeleeuw) works. The PsychWebTool provides three ways to save experimental data permanently. 
 
 ## Save the data as an object per trial
 
@@ -12,13 +12,13 @@ trial_data['imgFile'] = randImages[i];
 trial_data['RT'] = rt;
 ```
 
-First, define a blank [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects) of which name is whatever you want (here is **trial_data**). Then, set properties' value that you want to save **per trial**. The property names are recorded as column names of the CSV file. After setting properties' value, call the *writeData* function as follows.
+First, define a blank [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects) of which name is whatever you want (here is **trial_data**). Then, set properties' value that you want to save **per trial**. The property names are used as column names of the CSV file. After setting properties' value, call the *writeData* function as follows.
 
 ```
 writeData(trial_data);
 ```
 
-The *writeData* function is adapted from the *[jsPsych.data.write](https://github.com/jspsych/jsPsych/blob/v5.0.3/docs/markdown_docs/core_library/jspsych-data.md)* function. Note that the *writeData* function must be called **per trial**. 
+The *writeData* function is adapted from the *[jsPsych.data.write](https://github.com/jspsych/jsPsych/blob/v5.0.3/docs/markdown_docs/core_library/jspsych-data.md#jspsychdatawrite)* function. Note that the *writeData* function must be called **per trial**. 
 
 # Saving data as a CSV file in the participant's computer
 
