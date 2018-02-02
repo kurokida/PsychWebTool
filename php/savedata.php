@@ -10,7 +10,7 @@
 //  $dbc = mysql_connect('localhost', 'username', 'password');
 //  mysql_select_db('databasename', $dbc);
 //
-include('../../users/admin/database_connect.php');
+include('database_connect.php');
 
 // You should not need to edit below this line
 

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jspsych.js"></script>
+    <script type="text/javascript" src="../js/pwt.js"></script>
+<title>Page title whatever you want</title>
+<style type="text/css">
+/* Please add your css here or in an external file */
+body {
+    margin: 0;
+    padding: 0;
+}
+#mainCanvas {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+</style>
+
+<script type="text/javascript">
+
+onload = function() {
+    document.addEventListener("keyup", keyUpFunc);
+    document.addEventListener("keydown", keyDownFunc);
+    document.addEventListener("mouseup", mouseUpFunc);
+    document.addEventListener("mousedown", mouseDownFunc);
+    document.addEventListener("mousemove", mouseMoveFunc);
+    
+    runExp();
+}
+
+async function runExp() { // "async" is needed.
+    myCanvas = document.getElementById('mainCanvas');
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("Your web browser does not meet the requirements for this program.");
+        return false;
+    }
+
+    participant = prompt('Please enter your name.');
+
+    // Canvas fits the entire window
+    myCanvas.width = window.innerWidth;
+    myCanvas.height = window.innerHeight;
+
+    centerX = myCanvas.width / 2;
+    centerY = myCanvas.height / 2;
+
+    ctx = myCanvas.getContext('2d');
+
+    bgColor = "rgb(128, 128, 128)"; // Back ground color
+    stimColor = "rgb(255, 255, 255)"; // Stimulus color
+
+    for (i = 0; i < 3; i++) {
+        // Instraction
+        clearWindow(ctx, bgColor);
+        ctx.font = "22px 'Arial'";
+        drawText(ctx, 'Trial: ' + String(i + 1), centerX, centerY - 50, stimColor);
+        drawText(ctx, 'Please press a space key.', centerX, centerY + 50, stimColor);
+        await pressKey([" "]); // A space between double quotation is needed.
+
+        // storing the data
+        trial_data = {};
+		trial_data['participant'] = participant;
+		trial_data['trial'] = i + 1;
+
+        writeData(trial_data);
+    }
+
+    clearWindow(ctx, bgColor);
+
+    // saveCSV(participant);
+    save_data(jsPsych.data.getData()); // Save the data to the database.
+
+    drawText(ctx, 'The experiment finished.', centerX, centerY, stimColor);
+
+}
+
+// This function and explanation was written by Josh de Leeuw 
+// at https://github.com/jspsych/jsPsych/blob/v5.0.3/docs/markdown_docs/features/data.md
+//
+// data parameter should be either the value of jsPsych.data()
+// or the parameter that is passed to the on_data_update callback function for the core library
+// jsPsych.data() contains ALL data
+// the callback function will contain only the most recently written data.
+function save_data(data){
+   var data_table = "my_experiment_table"; // change this for different experiments
+   $.ajax({
+      type:'post',
+      cache: false,
+      url: '../php/savedata.php', // change this to point to your php file.
+      // opt_data is to add additional values to every row, like a subject ID
+      // replace 'key' with the column name, and 'value' with the value.
+      data: {
+          table: data_table,
+          json: JSON.stringify(data)
+      },
+      success: function(output) { console.log(output); } // write the result to javascript console
+   });
+}
+</script>
+</head>
+<body>
+    <canvas id="mainCanvas"></canvas> 
+</body>
+</html>
