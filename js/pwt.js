@@ -26,7 +26,8 @@ function pressKey (array) {
         var id = setInterval(function(){
             if (!keyLock && !keyPressed && keyDownEvent && (array.indexOf(keyDownEvent.key) >= 0)) {
                 clearInterval(id);
-                resolve(keyDownEvent.timeStamp); // to return the timestamp
+                // resolve(keyDownEvent.timeStamp); // to return the timestamp
+                resolve(getMsecs()); // for Safari                
             } else {
                 if (!keyPressed) {
                     keyDownEvent = null;
@@ -58,7 +59,8 @@ function clickMouse () {
         var id = setInterval(function(){
             if (!mouseLock && !mouseClicked && mouseDownEvent) {
                 clearInterval(id);
-                resolve(mouseDownEvent.timeStamp); // to return the timestamp
+                //resolve(mouseDownEvent.timeStamp); // to return the timestamp
+                resolve(getMsecs()); // for Safari 
             } else {
                 if (!mouseClicked) {
                     mouseDownEvent = null;

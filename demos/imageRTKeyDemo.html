@@ -107,7 +107,7 @@ async function runExp() { // "async" is needed.
 		trial_data['participant'] = participant;
 		trial_data['trial'] = i + 1;
         trial_data['imgFile'] = randImages[i];
-        trial_data['RT'] = rt;
+        trial_data['RT(ms)'] = rt;
 
         writeData(trial_data);
     }

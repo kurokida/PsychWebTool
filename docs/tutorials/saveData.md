@@ -1,4 +1,4 @@
-The PsychWebTool includes jsPsych v.5.0.3 and uses a lots of functions of it. I greately appreciate [Josh de Leeuw](https://twitter.com/joshdeleeuw) works. The PsychWebTool provides three ways to save experimental data permanently. 
+The PsychWebTool includes jsPsych v.5.0.3 and uses a lots of functions of it. I greately appreciate Dr. [Josh de Leeuw](https://twitter.com/joshdeleeuw)'s work. The PsychWebTool provides three ways to save experimental data permanently. 
 
 # Save the data as an object per trial
 

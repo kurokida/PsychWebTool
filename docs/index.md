@@ -5,12 +5,12 @@ The consept of the library resembles that of [jsPsych](http://www.jspsych.org/) 
 If you interested in core technologies which PsychWebTool is based on, please refer to [keywords: async, await, and promise](keywords.md).
 
 # Tutorials
-- [The most basic sample code including the installation process](tutorials/howtouse.md)
+- [The most basic sample code including the installation processes](tutorials/howtouse.md)
 - [Presentation of a image file](tutorials/presentImage.md)
 - [Saving Data](tutorials/saveData.md)
 
 # Demonstration
-There are [some demonstration programs](demo.md) in the **demo** folder. These are usuful for understanding how to use PsychWebTool. 
+There are [some demonstration programs](demo.md) in the **demos** folder. These are usuful for understanding how to use PsychWebTool. 
 
 # Functions
 
