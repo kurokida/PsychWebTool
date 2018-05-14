@@ -119,20 +119,83 @@ function clearWindow(ctx, color) {
     }
 }
 
-function drawText(ctx, text, x, y, color, maxWidth) {
+// maxWidthで自動改行できるが、単語の途中で改行されてしまう。
+// function drawText(ctx, text, x, y, color, maxWidth) {
+//     if (arguments.length == 5 || arguments.length == 6) {
+//         ctx.fillStyle = color;
+//         ctx.textAlign = "center";
+//         ctx.textBaseline = "middle"
+//         if (typeof maxWidth === 'undefined') {
+//             ctx.fillText(text, x, y);
+//         } else {
+//             //ctx.fillText(text, x, y, maxWidth);
+//             //var cw = canvas.width - 10; // canvasの幅-10はマージン
+//             //var cy = 5; // 縦軸の書き出し位置
+//             var cyp = 0;  // 改行幅。初期は改行しないので0
+//             //var messeges = "あいうえお";
+//             var mess = "";
+//             var messArry = text.split(""); // 文字を一文字ずつ配列に入れる
+//              for ( var i = 0; i < messArry.length; i++){
+//                mess += messArry[i];              // 一文字ずつ文字を追記代入
+//                var textwid = ctx.measureText(mess).width;  // 文字の長さを測る
+//                //if ( cw > textwid ){
+//                 if (textwid > maxWidth) {
+//                   ctx.fillText(mess, x, y + cyp);
+//                   cyp += 18; // 改行幅(文字サイズ+2)。+2はマージン
+//                   mess = "";
+//                }
+//              }
+//              ctx.fillText(mess, x, y + cyp);
+//         }
+//     } else {
+//         throw new Error("Please check the number of the arguments.");
+//     }
+// }
+
+function drawText(ctx, text, x, y, color, space) {
     if (arguments.length == 5 || arguments.length == 6) {
         ctx.fillStyle = color;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle"
-        if (typeof maxWidth === 'undefined') {
-            ctx.fillText(text, x, y);
-        } else {
-            ctx.fillText(text, x, y, maxWidth);
+
+        if (typeof space === 'undefined') {
+            space = 20;
+        }
+        
+        let column = [''];
+        let line = 0;
+        for (let i = 0; i < text.length; i++) {
+            let char = text.charAt(i);
+
+            if (char == "\n") {    
+                line++;
+                column[line] = '';
+            }
+            column[line] += char;
+        }
+
+        for (let j = 0; j < column.length; j++) {
+            ctx.fillText(column[j], x, y - space * (column.length-1) / 2 + space * j);
         }
     } else {
         throw new Error("Please check the number of the arguments.");
     }
 }
+
+// function drawText(ctx, text, x, y, color, maxWidth) {
+//     if (arguments.length == 5 || arguments.length == 6) {
+//         ctx.fillStyle = color;
+//         ctx.textAlign = "center";
+//         ctx.textBaseline = "middle"
+//         if (typeof maxWidth === 'undefined') {
+//             ctx.fillText(text, x, y);
+//         } else {
+//             ctx.fillText(text, x, y, maxWidth);
+//         }
+//     } else {
+//         throw new Error("Please check the number of the arguments.");
+//     }
+// }
 
 function fillOval(ctx, x, y, radius, color) {
     if (arguments.length == 5) {
