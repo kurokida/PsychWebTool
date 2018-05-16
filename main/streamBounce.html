@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jspsych.js"></script>
+    <script type="text/javascript" src="../js/pwt.js"></script>
+<title>Stream Bounce Experiment</title>
+<style type="text/css">
+/* Please add your css here or in an external file */
+body {
+  margin: 0;
+  padding: 0;
+}
+#mainCanvas {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+</style>
+<script type="text/javascript">
+
+
+onload = function() {
+    document.addEventListener("keyup", keyUpFunc);
+    document.addEventListener("keydown", keyDownFunc);
+    document.addEventListener("mouseup", mouseUpFunc);
+    document.addEventListener("mousedown", mouseDownFunc);
+    document.addEventListener("mousemove", mouseMoveFunc);
+    
+    runExp();
+}
+
+// Please note that when you change the size of the window the program is initialized.
+resizeTimer = false;
+resizeFlag = true;
+onresize = function (){
+    if (resizeFlag) {
+        if (resizeTimer !== false) {
+            clearTimeout(resizeTimer);
+        }
+        resizeTimer = setTimeout(function() {
+            location.reload();
+        }, 200);
+    }
+}
+
+async function runExp() { // "async" is needed.
+    myCanvas = document.getElementById('mainCanvas');
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("Your web browser does not meet the requirements for this program.");
+        return false;
+    }
+
+    participant = prompt('名前をアルファベットで入力してください。');
+
+    // Canvas fits the entire window
+    myCanvas.width = window.innerWidth;
+    myCanvas.height = window.innerHeight;
+
+    centerX = myCanvas.width / 2;
+    centerY = myCanvas.height / 2;
+    
+    ctx = myCanvas.getContext('2d');
+    ctx.font = "22px 'Arial'";
+
+    bgColor = "rgb(128, 128, 128)"; // Back ground color
+    stimColor = "rgb(0, 0, 0)"; // Stimulus color
+
+    document.body.style.cursor = "none"; // delete the cursor
+
+    // Assumption. Both viewingDistance and ppcm are reserved words. Please modify these values.
+    viewingDistance = 60; // cm
+    ppcm = 47; // pixels per cm
+
+    radius = deg2pix(0.5)/2;
+    velocity = 6 // degrees per sec
+    velocity = deg2pix(velocity) / 1000; // pixels per millisecond
+    distance = deg2pix(4.2); // distance between the two circles
+    lx = centerX - distance / 2; // starting position of the left circle
+    rx = centerX + distance / 2; // starting position of the right circle
+    collisionTime = distance / 2 / velocity; // ms
+    fixationLength = deg2pix(0.5);
+    
+    if (Math.random() < 0.5) { // for counter balance
+        keyStyle = 1;
+        respKey1 = '左矢印キー';
+        respKey2 = '右矢印キー';
+    } else {
+        keyStyle = 2;
+        respKey1 = '右矢印キー';
+        respKey2 = '左矢印キー';
+    }
+    clearWindow(ctx, bgColor);
+    drawText(ctx, 'この実験では２つの円が水平方向に移動します。\n' +
+        '２つの円が通過したように見えたときは' + respKey1 + 'を\n' +
+        '衝突して跳ね返ったように見えたときは' + respKey2 + 'を押してください。\n\n' +
+        '＋マークが出ているときは、＋を見てください。\n' +
+        'エンターキーを押すと練習を開始します。\n練習のあいだに音の大きさを調整してください。ただし音が聞こえないときもあります。', centerX, centerY, stimColor, 30);
+    await pressKey(["Enter"]);
+
+
+    for (phase = 0; phase < 2; phase ++) {
+        if (phase == 0) { // practice
+            condition = [1, 2, 3, 4, 5, 6];
+            randCond = randomization(condition, 3); // the second argument means the number of repetitions
+        } else { // experiment
+            condition = [1, 2, 3, 4, 5, 6];
+            randCond = randomization(condition, 12); // the second argument means the number of repetitions
+
+            drawText(ctx, '練習試行が終わりました。いまから本試行を始めます。\n' +
+                '２つの円が通過したように見えたときは' + respKey1 + 'を\n' +
+                '衝突して跳ね返ったように見えたときは' + respKey2 + 'を押してください。\n\n' +
+                '＋マークが出ているときは、＋を見てください。\n' +
+                'エンターキーを押すと実験を開始します。', centerX, centerY, stimColor, 30);
+            await pressKey(["Enter"]);
+        }
+    
+    
+        for (j = 0; j < randCond.length; j++) {
+
+            if (phase == 1 && j == Math.ceil(randCond.length/2)) {
+                drawText(ctx, '実験の半分が終わりました。\n' +
+                    '休憩してください。\n\n' +                    
+                    'エンターキーを押すと実験を再開します。\n' +
+                    '２つの円が通過したように見えたときは' + respKey1 + 'を\n' +
+                    '衝突して跳ね返ったように見えたときは' + respKey2 + 'を押してください。', centerX, centerY, stimColor, 30);
+                await pressKey(["Enter"]);
+            }
+
+            if (randCond[j] == 1) {
+                soundFlag = false; // no sound
+            } else {
+                soundFlag = true;
+                if (randCond[j] == 2) {
+                    timeLag = -150;
+                } else if (randCond[j] == 3) {
+                    timeLag = -75;
+                } else if (randCond[j] == 4) {
+                    timeLag = 0;
+                } else if (randCond[j] == 5) {
+                    timeLag = 75;
+                } else {
+                    timeLag = 150;
+                }
+            }
+
+            clearWindow(ctx, bgColor);
+            drawText(ctx, 'スペースキーを押してください。', centerX, centerY, stimColor);
+            await pressKey([" "]);
+
+            clearWindow(ctx, bgColor);
+            // fixation cross
+            drawLine(ctx, centerX, centerY - fixationLength/2, centerX, centerY + fixationLength/2, 4, stimColor); // vertical line
+            drawLine(ctx, centerX - fixationLength/2, centerY, centerX + fixationLength/2, centerY, 4, stimColor); // horizontal line
+            await milliseconds(500); // duration of the fixation cross
+
+            // static circles in addition to the fixation cross
+            fillOval(ctx, lx, centerY, radius, stimColor); 
+            fillOval(ctx, rx, centerY, radius, stimColor); 
+            await milliseconds(1000);
+            
+            // Both keyLock and mouseLock are reserved words.
+            keyLock = true; // keyboard is not available until given false
+            mouseLock = true; // mouse is not available until given false
+
+            start = null; // This will be the base time of the requestAnimationFrame method.
+            window.requestAnimationFrame(step); // start the motion
+
+            await pressKey(["ArrowLeft", "ArrowRight", "Left", "Right"]); // Be sure to add the await prefix.
+
+            if (phase == 1) {
+                // storing the data
+                trial_data = {};
+                trial_data['participant'] = participant;
+                trial_data['keyStyle'] = keyStyle;
+                trial_data['trial'] = j + 1;
+                trial_data['condition'] = randCond[j];
+
+                if (keyDownEvent.key == "ArrowLeft" || keyDownEvent.key == "Left") {
+                    if (keyStyle == 1) { 
+                        resp = 1; // stream
+                    } else {
+                        resp = 2; // bounce
+                    }
+                } else {
+                    if (keyStyle == 1) { 
+                        resp = 2; // bounce
+                    } else {
+                        resp = 1; // stream
+                    }
+                }
+                trial_data['Response'] = resp;
+                writeData(trial_data);
+            }
+        }
+    }
+
+    saveCSV(participant);
+
+    clearWindow(ctx, bgColor);
+    drawText(ctx, '実験は終了です。', centerX, centerY, stimColor);
+    document.body.style.cursor = "auto"; // restore the cursor
+    resizeFlag = false;
+}
+
+// step is a callback function of the requestAnimationFrame method.
+function step(timestamp) {
+    if (!start) {
+        start = timestamp;
+    }
+    
+    elapsedTime = timestamp - start; // ms
+    
+    movingDist = velocity * elapsedTime;
+    
+    clearWindow(ctx, bgColor);
+    fillOval(ctx, lx + movingDist, centerY, radius, stimColor); 
+    fillOval(ctx, rx - movingDist, centerY, radius, stimColor); 
+
+    if (soundFlag && elapsedTime >= (collisionTime + timeLag)) {
+        document.getElementById('audio1').play();
+        soundFlag = false;
+    }
+
+    if (movingDist <= distance) {
+        window.requestAnimationFrame(step);
+    } else {
+        clearWindow(ctx, bgColor);
+        keyLock = false; // keyboard will be available
+        mouseLock = false; // mouse will be available
+    }
+}
+
+</script>
+</head>
+<body>
+    <canvas id="mainCanvas"></canvas> 
+    <audio id="audio1" preload="auto"><source src="../sounds/collisionSound.wav" type="audio/wav"></audio>
+</body>
+</html>

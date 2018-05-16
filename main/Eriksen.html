@@ -123,7 +123,7 @@ async function runExp() { // "async" is needed.
             }
         }
         startTime = getMsecs();
-        await pressKey(["ArrowLeft", "ArrowRight"]); // Be sure to add the await prefix.
+        await pressKey(["ArrowLeft", "ArrowRight", "Left", "Right"]); // Be sure to add the await prefix.
 
         rt = keyDownEvent.timeStamp - startTime; // Reaction time
         

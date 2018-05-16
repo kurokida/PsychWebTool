@@ -7,6 +7,8 @@ let keyPressed = false; // This is true when any key is pressed
 let mouseClicked = false;
 let keyLock = false;
 let mouseLock = false;
+let viewingDistance = 0;
+let ppcm = 0;
 
 function keyDownFunc(e){
     if (!keyPressed) {
@@ -315,4 +317,20 @@ function showImage(ctx, imageData, centerX, centerY, zoom) {
     } else {
         throw new Error("Please check the number of the arguments.");
     }
+}
+
+function deg2pix(degrees) {
+    return Math.tan(deg2rad(degrees)) * viewingDistance * ppcm;
+}
+
+function pix2deg(pixels) {
+    return rad2deg(Math.atan(pixels/ppcm/viewingDistance));
+}
+
+function deg2rad(degrees) {
+    return degrees * Math.PI / 180;
+}
+
+function rad2deg(radians) {
+    return radians / Math.PI * 180;
 }

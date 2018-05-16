@@ -1,4 +1,4 @@
-There are some demonstration programs in the **demo** folder you downloaded. These are usuful for understanding how to use PsychWebTool. 
+There are some demonstration programs in the **main** folder you downloaded. These are usuful for understanding how to use PsychWebTool. 
 
 # Demonstration programs list
 
