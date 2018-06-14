@@ -18,6 +18,12 @@ body {
     left: 0px;
     z-index: 1;
 }
+#circleID {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2; /* Set the value larger than that of mainCanvas */
+}
 </style>
 <script type="text/javascript">
 
@@ -68,12 +74,20 @@ async function runExp() { // "async" is needed.
 
     // preparing an canvas for a circle
     radius = 30;    
+    circle = document.getElementById('circleID'); // Be sure to write <canvas id="circleID"></canvas> in the body element.
+    circle.width = radius * 2 + 50; // add an arbitrary number (here is 50) to prevent a circle from breaking.
+    circle.height = radius * 2 + 50; // add an arbitrary number (here is 50) to prevent a circle from breaking.
+    circleCtx = circle.getContext('2d');
+    circleCtx.clearRect(0, 0, circle.width, circle.height);
+    fillOval(circleCtx, circle.width / 2, circle.height / 2, radius, "rgb(0, 0, 255)"); // draw a circle in the canvas
+    circle.style.visibility = "hidden";
 
     clearWindow(ctx, bgColor);
     drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
     await pressKey([" "]);
 
     clearWindow(ctx, bgColor);
+    circle.style.visibility = "visible";
 
     timeArray = [];
     cnt = 0;
@@ -112,16 +126,13 @@ function step(timestamp) {
     
     dist = (v / 1000) * elapsedTime;
 
-    clearWindow(ctx, bgColor);
-    fillOval(ctx, dist, centerY, radius, stimColor); 
-
-    //circle.style.left = Math.round(dist) + 'px'; // move the circle
+    circle.style.left = Math.round(dist) + 'px'; // move the circle
 
     if (elapsedTime < duration) { // The time when you want to stop the motion is depend on the condition.
         window.requestAnimationFrame(step);
     } else {
         clearWindow(ctx, bgColor);
-        //circle.style.visibility = "hidden";
+        circle.style.visibility = "hidden";
         drawText(ctx, 'Please press a space key.', centerX, centerY, stimColor);
         keyLock = false; // keyboard will be available
         mouseLock = false; // mouse will be available
@@ -132,5 +143,6 @@ function step(timestamp) {
 </head>
 <body>
     <canvas id="mainCanvas"></canvas> 
+    <canvas id="circleID"></canvas>
 </body>
 </html>
