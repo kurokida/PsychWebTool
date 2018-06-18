@@ -53,7 +53,7 @@ async function runExp() { // "async" is needed.
         return false;
     }
 
-    participant = prompt('Please enter your name.');
+    participant = prompt('名前をアルファベットで入力してください。');
 
     // Canvas fits the entire window
     myCanvas.width = window.innerWidth;
@@ -85,19 +85,19 @@ async function runExp() { // "async" is needed.
     
     if (Math.random() < 0.5) { // for counter balance
         keyStyle = 1;
-        respKey1 = 'Left Arrow key';
-        respKey2 = 'Right Arrow key';
+        respKey1 = '左矢印キー';
+        respKey2 = '右矢印キー';
     } else {
         keyStyle = 2;
-        respKey1 = 'Right Arrow key';
-        respKey2 = 'Left Arrow key';
+        respKey1 = '右矢印キー';
+        respKey2 = '左矢印キー';
     }
     clearWindow(ctx, bgColor);
-    drawText(ctx, 'In this experiment, two identical circles moves across each other.\n' +
-        'If you perceive that the circles stream through each other, please press the ' + respKey1 + '.\n' +
-        'If you perceive that the circles bounce off each other, please press the ' + respKey2 + '.\n\n' +
-        'Please fixate the ＋ mark during it is presented.\n' +
-        'Press the enter key to start a practice session.\nPlease modulate the volume of sound during the practice.', centerX, centerY, stimColor, 30);
+    drawText(ctx, 'この実験では２つの円が水平方向に移動します。\n' +
+        '２つの円が通過したように見えたときは' + respKey1 + 'を\n' +
+        '衝突して跳ね返ったように見えたときは' + respKey2 + 'を押してください。\n\n' +
+        '＋マークが出ているときは、＋を見てください。\n' +
+        'エンターキーを押すと練習を開始します。\n練習のあいだに音の大きさを調整してください。ただし音が聞こえないときもあります。', centerX, centerY, stimColor, 30);
     await pressKey(["Enter"]);
 
 
@@ -109,11 +109,11 @@ async function runExp() { // "async" is needed.
             condition = [1, 2, 3, 4, 5, 6];
             randCond = randomization(condition, 12); // the second argument means the number of repetitions
 
-            drawText(ctx, 'The practice session finished.\n' +
-            'If you perceive that the circles stream through each other, please press the ' + respKey1 + '.\n' +
-            'If you perceive that the circles bounce off each other, please press the ' + respKey2 + '.\n\n' +
-            'Please fixate the ＋ mark during it is presented.\n' +
-            'Press the enter key to start the experiment.', centerX, centerY, stimColor, 30);
+            drawText(ctx, '練習試行が終わりました。いまから本試行を始めます。\n' +
+                '２つの円が通過したように見えたときは' + respKey1 + 'を\n' +
+                '衝突して跳ね返ったように見えたときは' + respKey2 + 'を押してください。\n\n' +
+                '＋マークが出ているときは、＋を見てください。\n' +
+                'エンターキーを押すと実験を開始します。', centerX, centerY, stimColor, 30);
             await pressKey(["Enter"]);
         }
     
@@ -121,11 +121,11 @@ async function runExp() { // "async" is needed.
         for (j = 0; j < randCond.length; j++) {
 
             if (phase == 1 && j == Math.ceil(randCond.length/2)) {
-                drawText(ctx, 'You finished half of the trials.\n' +
-                    'Take a rest.\n\n' +                    
-                    'Press the enter key to continue.\n' +
-                    'If you perceive that the circles stream through each other, please press the ' + respKey1 + '.\n' +
-                    'If you perceive that the circles bounce off each other, please press the ' + respKey2 + '.\n\n', centerX, centerY, stimColor, 30);
+                drawText(ctx, '実験の半分が終わりました。\n' +
+                    '休憩してください。\n\n' +                    
+                    'エンターキーを押すと実験を再開します。\n' +
+                    '２つの円が通過したように見えたときは' + respKey1 + 'を\n' +
+                    '衝突して跳ね返ったように見えたときは' + respKey2 + 'を押してください。', centerX, centerY, stimColor, 30);
                 await pressKey(["Enter"]);
             }
 
@@ -147,7 +147,7 @@ async function runExp() { // "async" is needed.
             }
 
             clearWindow(ctx, bgColor);
-            drawText(ctx, 'Press the space key.', centerX, centerY, stimColor);
+            drawText(ctx, 'スペースキーを押してください。', centerX, centerY, stimColor);
             await pressKey([" "]);
 
             clearWindow(ctx, bgColor);
@@ -200,7 +200,7 @@ async function runExp() { // "async" is needed.
     saveCSV(participant);
 
     clearWindow(ctx, bgColor);
-    drawText(ctx, 'The experiment finished.', centerX, centerY, stimColor);
+    drawText(ctx, '実験は終了です。', centerX, centerY, stimColor);
     document.body.style.cursor = "auto"; // restore the cursor
     resizeFlag = false;
 }
