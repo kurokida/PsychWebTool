@@ -17,7 +17,7 @@ There are [some demonstration programs](demo.md) in the **main** folder. These a
 # Functions
 
 # License
-The PWT includes the [jsPsych](http://www.jspsych.org/)  (de Leeuw, 2015) and [jQuery](https://jquery.com/) released under the MIT license.
+The PWT includes the [jsPsych](http://www.jspsych.org/)  (de Leeuw, 2015) and [jQuery](https://jquery.com/) that are released under the MIT license.
 
 >de Leeuw, J. R. (2015). jsPsych: A JavaScript library for creating behavioral experiments in a web browser. Behavior Research Methods, 47(1), 1-12. doi:10.3758/s13428-014-0458-y.
 
