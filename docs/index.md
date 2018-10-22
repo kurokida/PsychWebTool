@@ -1,6 +1,6 @@
 PsychWebTool (PWT) is a JavaScript library for behavioral experimets. The PWT can be used free of charge for both online and offline experiments in a modern web browser.
 
-The consept of the library resembles that of [jsPsych](http://www.jspsych.org/) but the programing style is quite diffrent. As a result, the advantage of the PWT is also diffrent from that of the jsPsych. For example, PWT can easily present a stimulus which have not been used often in web-based experiments like a moving circle.
+The consept of the library resembles that of [jsPsych](http://www.jspsych.org/) (de Leeuw, 2015) but the programing style is quite diffrent from it. The PWT enables the user to write code more intuitively.
 
 If you interested in core technologies which PsychWebTool is based on, please refer to [keywords: async, await, and promise](keywords.md).
 
