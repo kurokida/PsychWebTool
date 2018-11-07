@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jspsych.js"></script>
+    <script type="text/javascript" src="pwt.js"></script>
+<title>ページのタイトル</title>
+<style type="text/css">
+body {
+  margin: 0;
+  padding: 0;
+  /* cursor: none; */
+}
+#mainCanvas {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+
+#circleID {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+}
+
+</style>
+<script type="text/javascript">
+
+const canvasWidth = window.innerWidth;
+const canvasHeight = window.innerHeight;
+
+onload = function() {
+    document.addEventListener("keyup" , KeyUpFunc);
+    document.addEventListener("keydown" , KeyDownFunc);
+    document.addEventListener("mousedown" , MouseDownFunc);
+    document.addEventListener("mousemove" , MouseMoveFunc);
+    
+    doexp();
+}
+
+async function doexp() {
+    const myCanvas = document.getElementById('mainCanvas');
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("本ページの閲覧はHTML5対応ブラウザで行ってください");
+        return false;
+    }
+
+    let participant = prompt('参加者名を入力してください。');
+
+    // canvasの幅と高さ、中心座標
+    myCanvas.width = window.innerWidth;
+    myCanvas.height = window.innerHeight;
+    
+    const randomID = jsPsych.randomization.randomID(6);
+    const datestr=new Date(); // 日時の情報
+    const dateFullStr = "" + datestr.getFullYear() + (datestr.getMonth()+1) + datestr.getDate() + datestr.getHours() + datestr.getMinutes() + datestr.getSeconds();
+
+    const centerX = myCanvas.width / 2;
+    const centerY = myCanvas.height / 2;
+
+    const zoom = 0.7; // 画像の拡大縮小率
+    
+    const kankaku = 70;
+    const lineX = [centerX - kankaku * 3, centerX - kankaku * 2, centerX - kankaku, centerX, centerX + kankaku, centerX + kankaku * 2, centerX + kankaku * 3];
+    const lineY = centerY + 300;
+
+    const ctx = myCanvas.getContext('2d');
+
+    const bgColor = "rgb(76, 76, 76)";
+    const stimColor = "rgb(255, 255, 255)";
+
+    const buttonW = 200;
+    const buttonH = 50;
+
+    // 回答円
+    const radius = 14;
+    const circle = document.getElementById('circleID');
+    circle.width = radius * 2 + 50; // 円が切れずに表示されるように+50している。
+    circle.height = radius * 2 + 50;
+    const circleCtx = circle.getContext('2d');
+    circleCtx.clearRect(0, 0, circle.width, circle.height);
+    FrameOval(circleCtx, circle.width / 2, circle.height / 2, radius, 4, stimColor);
+    circle.style.visibility = "hidden";
+
+    let images = [];
+    let questions = [];
+    for (let phase = 0; phase < 2; phase++) { // phase=0は練習試行
+        if (phase == 0) {
+            images = [
+                'img/p1.png',
+                'img/p2.png',
+                'img/p3.png',
+            ];
+
+            questions = [ // 1列目の数字はゼロから始めること！
+                [0, '感じの悪い','感じの良い'],
+                [1, '自分勝手な','思いやりのある'],
+                [2, 'いじわるな','親切な'],
+            ];
+
+        } else {
+
+            images = [
+                'img/long_1.png',
+                'img/long_2.png',
+                'img/long_3.png'];
+           	    // 'img/long_6.png',
+            	// 'img/long_9.png',
+            	// 'img/longmae_1.png',
+            	// 'img/longmae_2.png',
+            	// 'img/longmae_3.png',
+            	// 'img/longmae_6.png',
+            	// 'img/longmae_9.png',
+            	// 'img/short_1.png',
+            	// 'img/short_2.png',
+            	// 'img/short_3.png',
+            	// 'img/short_6.png',
+            	// 'img/short_9.png',
+            	// 'img/shortmae_1.png',
+            	// 'img/shortmae_2.png',
+            	// 'img/shortmae_3.png',
+            	// 'img/shortmae_6.png',
+            	// 'img/shortmae_9.png'];
+
+            // 質問項目
+            questions = [　// 1列目の数字はゼロから始めること！
+                [0, '感じの悪い','感じの良い'],
+                [1, '自分勝手な','思いやりのある'],
+                [2, 'いじわるな','親切な']];
+        //     	[3, '良心的でない','良心的な'],
+        //     	[4,'信頼できない','信頼できる'],
+        //     	[5,'不誠実な','誠実な'],
+        //     	[6,'心のせまい','心のひろい'],
+        //     	[7,'悪い','良い'],
+        //     	[8,'おとなしい','活発な'],
+        //     	[9,'内向的な','外向的な'],
+        //     	[10,'悲観的な','楽観的な'],
+        //     	[11,'消極的な','積極的な'],
+        //     	[12,'静かな','にぎやかな'],
+        //     	[13,'沈んだ','うきうきした'],
+        //     	[14,'暗い','明るい'],
+        //     	[15,'ユーモアのない','ユーモアのある'],
+		// [16,'髪型が似合っていない','髪型が似合っている']
+        //     ];
+            
+        }
+
+        jsPsych.pluginAPI.preloadImages(images);
+
+        const randImages = jsPsych.randomization.repeat(images, 1);
+        const randQuestions = jsPsych.randomization.repeat(questions, 1);
+        
+        console.log('start');
+
+        for (let i = 0; i < randImages.length; i++) {
+            let respNum;
+
+            ClearWindow(ctx, bgColor);
+            ctx.font = "bold 22px 'ＭＳ Ｐゴシック'";
+            if ((i == 0) && (phase == 0)) {
+                DrawText(ctx, 'いまから練習試行を始めます。スペースキーを押してください。', centerX, centerY, stimColor);
+            } else if ((i == 0) && (phase == 1)) {
+                DrawText(ctx, 'いまから本試行を始めます。スペースキーを押してください。', centerX, centerY, stimColor);
+            } else {
+                DrawText(ctx, 'スペースキーを押してください。', centerX, centerY, stimColor);
+            }
+            let time1a = await keyDownCheck([" "]);
+
+            //ClearWindow(ctx, bgColor);
+            // 凝視点
+            //DrawLine(ctx, centerX, centerY - 10, centerX, centerY + 10, 4, stimColor);
+            //DrawLine(ctx, centerX - 10, centerY, centerX + 10, centerY, 4, stimColor);
+            
+            //await waitMsecs(1000);
+
+            ClearWindow(ctx, bgColor);
+            
+            // 刺激画像            
+            DrawImage(ctx, randImages[i], centerX, centerY-100, zoom);
+            let time1b = GetMsecs ();
+            //console.log(time1);
+
+
+            //DrawText(ctx, '画像 No.' + String(i+1), centerX, lineY-50, stimColor);
+            DrawText(ctx, '画像の人物の、見た目の年齢を回答してください。', centerX, lineY, stimColor);
+            DrawText(ctx, 'Fキーを押すと回答画面が表示されます。', centerX, lineY+50, stimColor);
+            //keyDownEvent = null;
+            let time2 = await keyDownCheck([" "]);
+            //let time3 = time2 - time1;
+            console.log("RT-a="+(time2 - time1a));
+            console.log("RT-b="+(time2 - time1b));
+
+	    let nenrei = prompt('年齢を半角数字で入力してOKをクリックしてください。');
+            
+            let ansArray = [];
+            for (let m = 0; m < randQuestions.length; m++) {
+
+                ClearWindow(ctx, bgColor);
+                
+                // 刺激画像            
+                DrawImage(ctx, randImages[i], centerX, centerY-100, zoom);
+
+                //　スケール
+                for (let j = 0; j < lineX.length; j++) {
+                    DrawLine(ctx, lineX[j], lineY - 20, lineX[j], lineY + 20, 3, stimColor);
+            
+                }
+                DrawLine(ctx, lineX[0], lineY, lineX[lineX.length-1], lineY, 3, stimColor);
+
+                // 質問対
+                DrawText(ctx, randQuestions[m][1], lineX[0]-120, lineY, stimColor);
+                DrawText(ctx, randQuestions[m][2], lineX[lineX.length-1]+120, lineY, stimColor);
+
+                mouseMoveFlag = true;
+                mouseDownEvent = null; 
+                
+                while (mouseMoveFlag) {
+                    if (mouseDownEvent != null) {
+                        //console.log(mouseDownEvent.buttons);
+                    }
+                    
+                    //if (keyDownEvent.key == "ArrowLeft") {
+                    if ((mouseDownEvent != null) && (mouseDownEvent.button == 0)) {
+                        //FrameOval(canvas, mouseDownEvent.clientX, mouseDownEvent.clientY, 20, "rgb(255, 0, 0)");
+
+                        //FrameOval(circleCtx, circle.width / 2, circle.height / 2, radius, 4, "rgb(255, 0, 0)");
+                        const range = 20;
+                        const buttonX = centerX;
+                        const buttonY = lineY + 100;
+                        const mx = mouseDownEvent.clientX;
+                        const my = mouseDownEvent.clientY;
+                        for (let k = 0; k < lineX.length; k++) {
+                            if ((lineX[k] - range < mx) && (lineX[k] + range > mx) && (lineY - range < my) && (lineY + range > my)) {
+                                // 回答円
+                                circle.style.left = lineX[k] - circle.width / 2 + 'px';
+                                circle.style.top = lineY - circle.height / 2 + 'px';
+                                circle.style.visibility = "visible";
+
+                                respNum = k + 1;
+                                // 次へボタン
+                                FillRect(ctx, buttonX, buttonY, buttonW, buttonH, stimColor);
+                                DrawText(ctx, '次の質問へ', buttonX, buttonY, "rgb(0, 0, 0)");
+                            }
+                        }
+                        
+                        // 回答を終えたら
+                        if ((circle.style.visibility == "visible") && (buttonX - buttonW/2 < mx) && (buttonX + buttonW/2 > mx) && (buttonY - buttonH/2 < my) && (buttonY + buttonH/2 > my)){
+                            mouseMoveFlag = false;
+                            circle.style.visibility = "hidden";
+
+                            ansArray[randQuestions[m][0]] = respNum;
+                        }
+                        mouseDownEvent = null;
+                        
+                        //console.log("loop stop")
+                    }
+
+                    await waitMsecs(1); // めっちゃポイント？ FillRectが反映される？　たぶんキューにたまった処理が行われている
+                };
+            };
+
+            if (phase == 1) { // 本試行のときだけ保存
+                let trial_data = {};
+		trial_data['participant'] = participant;
+		trial_data['trial'] = i+1;
+                trial_data['imgFile'] = randImages[i];
+                trial_data['nenrei'] = nenrei;
+		for (let l = 0; l < ansArray.length; l++) {
+                    qLabel = 'Q'+(l);
+                    //qLabel = questions[l][2];
+                    trial_data[qLabel] = ansArray[l];
+                }
+
+                jsPsych.data.write2(trial_data);
+            }
+        }
+    }
+
+    ClearWindow(ctx, bgColor);
+
+    //jsPsych.data.displayData();
+    //console.log('Here is raw data: '+data);
+    //console.log('The experiment is over! Here is all the data: '+JSON.stringify(mydata));
+    jsPsych.data.localSave(participant + '_' + dateFullStr + '.csv', 'csv');
+
+    DrawText(ctx, '実験は終わりました。F5キーを押してください。', centerX, centerY, stimColor);
+
+}
+
+</script>
+</head>
+<body>
+    <!--
+        <audio id="id0"><source src="a.m4a"><source src="a.ogg"></audio>
+        -->
+    <!-- <canvas id="mainCanvas" width="500" height="400"></canvas> -->
+    <canvas id="mainCanvas"></canvas> 
+    <canvas id="circleID"></canvas> 
+</body>
+</html>
