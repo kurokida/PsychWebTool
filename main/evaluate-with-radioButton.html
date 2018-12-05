@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jspsych.js"></script>
+    <script type="text/javascript" src="../js/pwt.js"></script>
+    <link rel="stylesheet" href="../css/evaluate.css" type="text/css"></link>
+<title>Page title whatever you want</title>
+<script type="text/javascript">
+questions = [
+    ["Very ugly", "Ugly", "Neutral", "Beautiful", "Very beautiful"],
+    ["Worst", "Worse", "Better", "Best"],
+    ["Too small", "Small", "Normal", "Big", "Too Big"]
+];
+
+onload = function() {
+    document.addEventListener("keydown" , keyDownFunc);
+    document.addEventListener("keyup" , keyUpFunc);
+    document.addEventListener("mousedown" , mouseDownFunc);
+    document.addEventListener("mouseup" , mouseUpFunc);
+    document.addEventListener("mousemove" , mouseMoveFunc);
+    
+    myCanvas = document.getElementById('mainCanvas');
+    
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("Your web browser does not meet the requirements for this program.");
+        return false;
+    }
+
+    myCanvas.width = 1000;
+    myCanvas.height = 600;
+
+    centerX = myCanvas.width / 2;
+    centerY = myCanvas.height / 2;
+
+    zoom = 1; // To expand an image set more than 1, to downsize an image set less than 1. 
+
+    ctx = myCanvas.getContext('2d');
+    
+    bgColor = "rgb(128, 128, 128)"; // Back ground color
+    textColor = "rgb(255, 255, 255)"; // Stimulus color
+
+    images = [
+        '../images/1.jpg',
+        '../images/2.jpg',
+        '../images/3.jpg',
+    ];
+
+    randImages = randomization(images, 1); // the second argument means the number of repetitions
+
+    document.body.style.cursor = "auto";
+}
+
+function hideFaceForm(){
+    if ((document.form1.myName.value) && (document.form1.glasses.value)) {
+
+        myForm1 = document.getElementById('faceForm');
+        myForm1.style.display = "none";
+
+        cw = document.getElementById('canvas_wrapper');
+        cw.style.width = myCanvas.width + "px";
+        cw.style.height = myCanvas.height + "px";
+        cw.style.display = "block";        
+        cw.style.margin = "50px auto";
+
+        rw = document.getElementById('response_wrapper');
+        rw.style.display = "block";
+        rw.style.width = "800px";
+
+        glassesVal = document.form1.glasses.value;
+        myName = document.form1.myName.value;
+
+        stimCnt = 0;
+        questionCnt = 0;
+        ansArray = [];
+        refreshDisplay();
+    } else {
+        alert("Please enter your name, and answer the questions.")
+    }
+}
+
+async function refreshDisplay(){
+    
+    testImage = await loadImage(randImages[stimCnt]); // It might take time
+    
+    tmpStr = '';
+    percent = 100/questions[questionCnt].length;
+    for (i = 0; i < questions[questionCnt].length; i++){
+        tmpStr = tmpStr + '<li style="width:' + percent + '%"><label class="jspsych-survey-likert-opt-label">' + 
+            '<input type="radio" name="evaluate" value="' + (i+1) + '" required="">' + questions[questionCnt][i] +
+            '</label></li>';
+    }
+    ul_id = document.getElementById("jspsych-survey-likert-opts");
+    ul_id.innerHTML = tmpStr;
+
+    clearWindow(ctx, bgColor);
+    startTime = showImage(ctx, testImage, centerX, centerY, zoom); // "showImage" function returns the time when the image appears in a display.
+}
+
+function clickNextBtn() {
+    if (document.form2.evaluate.value) {
+        ansArray[questionCnt] = document.form2.evaluate.value;
+        questionCnt++;
+        if (questionCnt == questions.length) { // ある画像について、すべての質問に答えたら
+            // storing the data
+            trial_data = {};
+            trial_data['participant'] = myName;
+            trial_data['glasses'] = glassesVal;
+            //trial_data['stimCnt'] = stimCnt;
+            trial_data['imgFile'] = randImages[stimCnt];
+            for (let l = 0; l < ansArray.length; l++) {
+                qLabel = 'Q'+String(l+1);
+                trial_data[qLabel] = ansArray[l];
+            }
+            writeData(trial_data);
+
+            stimCnt++
+            questionCnt = 0;
+        }
+
+        if (stimCnt == randImages.length) {
+            saveCSV(myName);
+            clearWindow(ctx, bgColor);
+            ctx.font = "22px 'Arial'";
+            drawText(ctx, 'The experiment finished.', centerX, centerY, textColor);
+            //rw = document.getElementById('response_wrapper');
+            rw.style.display = "none";
+        } else {
+            refreshDisplay();
+        }
+    } else {
+        alert("Please answer the question.")
+    }
+
+}
+
+</script>
+</head>
+<body onContextmenu="return false">
+    <form id="faceForm" name="form1">
+        <p>Name: <input type="text" name="myName"></p>
+        <p>Do you wear glasses? 
+            <input type="radio" name="glasses" value="1" required>Yes
+            <input type="radio" name="glasses" value="2">No
+        </p>
+        
+        <p>
+            <button class="expBtn" type="button" onclick="hideFaceForm()">Start</button>
+        </p>
+    </form>
+
+    <div id="canvas_wrapper">
+        <canvas id="mainCanvas"></canvas> 
+    </div>
+    
+    <div id="response_wrapper">
+        <form id="expForm" name="form2">
+            <ul id="jspsych-survey-likert-opts"></ul>
+            <button class="expBtn" type="button" onclick="clickNextBtn()">Next</button>        
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+button.expBtn {
+    font-size: 1.4em;
+    padding: 10px 30px;
+}
+#canvas_wrapper{
+    display: none;
+}
+#faceForm {
+    margin: 50px 50px;
+}
+#response_wrapper {
+    text-align: center;
+    display: none;
+    margin: auto;
+}
+#jspsych-survey-likert-opts { 
+    list-style:none; 
+    width:100%; 
+    margin:0; 
+    padding:0 0 35px; 
+    display:block; 
+    font-size: 0px; /* This is important to prevent undesired space in the UL element.*/
+    line-height:1.1em;
+}
+#jspsych-survey-likert-opts:before { 
+    content: ''; 
+    position:relative; 
+    top:11px;
+    display:block; 
+    background-color:#efefef; 
+    height:4px; 
+    width:100%; 
+}
+#jspsych-survey-likert-opts li { 
+    display:inline-block; 
+    text-align:center; 
+    vertical-align: top; 
+    font-size: 14px; /* This is important to prevent undesired space in the UL element.*/
+}
+#jspsych-survey-likert-opts li input[type=radio] { 
+    display:block; 
+    position:relative; 
+    top:0; 
+    left:50%; 
+    margin-left:-6px; 
+}
+.jspsych-survey-likert-opt-label { 
+    line-height: 1.1em; 
+    color: #444; 
+}

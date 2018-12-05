@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jspsych.js"></script>
+    <script type="text/javascript" src="../js/pwt.js"></script>
+<title>Page title whatever you want</title>
+<style type="text/css">
+body {
+  margin: 0;
+  padding: 0;
+}
+#mainCanvas {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+
+#circleID {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+}
+
+</style>
+<script type="text/javascript">
+
+onload = function() {
+    document.addEventListener("keyup", keyUpFunc);
+    document.addEventListener("keydown", keyDownFunc);
+    document.addEventListener("mouseup", mouseUpFunc);
+    document.addEventListener("mousedown", mouseDownFunc);    
+    document.addEventListener("mousemove", mouseMoveFunc);
+    
+    runExp();
+}
+
+async function runExp() {
+    myCanvas = document.getElementById('mainCanvas');
+    if (!myCanvas || !myCanvas.getContext) {
+        alert("Your web browser does not meet the requirements for this program.");
+        return false;
+    }
+
+    participant = prompt('Please enter your name.');
+
+    myCanvas.width = window.innerWidth;
+    myCanvas.height = window.innerHeight;
+    
+    const datestr=new Date();
+    const dateFullStr = "" + datestr.getFullYear() + (datestr.getMonth()+1) + datestr.getDate() + datestr.getHours() + datestr.getMinutes() + datestr.getSeconds();
+
+    const centerX = myCanvas.width / 2;
+    const centerY = myCanvas.height / 2;
+
+    const zoom = 1; // To expand an image set more than 1, to downsize an image set less than 1. 
+    
+    const nSelect = 7; // Number of selection.
+    const gap = 70;
+    lineX = [];
+    for (i = 0; i < nSelect; i++) {
+        lineX[i] = centerX - gap*(nSelect-1)/2 + gap*i;
+    }
+    const lineY = centerY + 200;
+
+    const ctx = myCanvas.getContext('2d');
+
+    const bgColor = "rgb(76, 76, 76)";
+    const stimColor = "rgb(255, 255, 255)";
+
+    const buttonW = 200;
+    const buttonH = 50;
+
+    const lineSpace = 40;
+
+    const restNum = 24; // Take a rest every restNum trials.
+
+    // This circle is presented on the scale when a participant clicks a mouse.
+    const radius = 14;
+    const circle = document.getElementById('circleID');
+    circle.width = radius * 2 + 50; // Make the width a little bit longer than the diameter to present the circle clearly.
+    circle.height = circle.width; 
+    const circleCtx = circle.getContext('2d');
+    circleCtx.clearRect(0, 0, circle.width, circle.height);
+    frameOval(circleCtx, circle.width / 2, circle.height / 2, radius, 4, stimColor);
+    circle.style.visibility = "hidden";
+
+    let images = [];
+    const questions = [ // Set serial numbers which beggins from 0 in the head of each line.
+        [0, 'Ugly','Beautiful'],
+        [1, 'Bad','Good'],
+        [2, 'Small','Big'],
+    ];
+    const randQuestions = randomization(questions, 1);
+
+    for (let phase = 0; phase < 2; phase++) {
+        trialCnt = 0;
+        if (phase == 0) { // Practice
+            images = [
+                '../images/4.jpg',
+                '../images/5.jpg',
+                '../images/6.jpg',
+            ];
+            repeatNum = 1;
+        } else { // Experiment
+            images = [
+                '../images/1_aa.jpg',
+                '../images/2_bb.jpg',
+                '../images/3_cc.jpg',
+            ];        
+            repeatNum = 2;
+        }        
+
+        for (let count = 0; count < repeatNum; count++) {
+            
+            const randImages = randomization(images, 1);
+
+            for (let i = 0; i < randImages.length; i++) {
+                let respNum;
+
+                clearWindow(ctx, bgColor);
+                
+                ctx.font = "22px 'Arial'";
+
+                if ((trialCnt != 0) && (trialCnt % restNum == 0)) {
+                    drawText(ctx, trialCnt + 'trials are finished. Please take a rest.\nPlease press the down-arrow key to continue.', centerX, centerY, stimColor, lineSpace);
+                    await pressKey(["ArrowDown"]);
+                }
+
+                clearWindow(ctx, bgColor);
+                if ((phase == 0) && (i == 0) && (count == 0)) {
+                    drawText(ctx, 'Press the space key to practice.', centerX, centerY, stimColor, lineSpace);
+                } else if  ((phase == 1) && (i == 0) && (count == 0)) {
+                    drawText(ctx, 'Press the space key to start the experiment.', centerX, centerY, stimColor, lineSpace);
+                } else {
+                    drawText(ctx, 'Press the space key.', centerX, centerY, stimColor);
+                }
+                await pressKey([" "]);
+
+                clearWindow(ctx, bgColor);
+                
+                testImage = await loadImage(randImages[i]); // It might take time
+                
+                let ansArray = [];
+                for (let m = 0; m < randQuestions.length; m++) {
+
+                    clearWindow(ctx, bgColor);
+                    
+                    startTime = showImage(ctx, testImage, centerX, centerY-100, zoom); // "showImage" function returns the time when the image appears in a display.
+            
+                    //　Scale
+                    for (let j = 0; j < lineX.length; j++) {
+                        drawLine(ctx, lineX[j], lineY - 20, lineX[j], lineY + 20, 3, stimColor); //Vertical lines
+                        drawText(ctx, String(j), lineX[j], lineY-35, stimColor);
+                    }
+                    drawLine(ctx, lineX[0], lineY, lineX[lineX.length-1], lineY, 3, stimColor); // Horizontal line
+
+                    // A pair of questions
+                    tmpStr = randQuestions[m][1];
+                    metrics = ctx.measureText(tmpStr);
+                    drawText(ctx, tmpStr, lineX[0]-metrics.width/2-20, lineY, stimColor, lineSpace);
+                    tmpStr = randQuestions[m][2];
+                    metrics = ctx.measureText(tmpStr);
+                    drawText(ctx, tmpStr, lineX[lineX.length-1]+metrics.width/2+20, lineY, stimColor, lineSpace);
+
+                    mouseDownEvent = null; // Initialize mouseDownEvent
+                    while (true) { // Waiting for the mouse click
+                        if ((mouseDownEvent != null) && (mouseDownEvent.button == 0)) { // Left click
+                            const range = 20;
+                            const buttonX = centerX;
+                            const buttonY = lineY + 100;
+                            const mx = mouseDownEvent.clientX;
+                            const my = mouseDownEvent.clientY;
+                            // If a pariticant click on the scale then the program draws a circle and the next button.
+                            for (let k = 0; k < lineX.length; k++) {
+                                if ((lineX[k] - range < mx) && (lineX[k] + range > mx) && (lineY - range < my) && (lineY + range > my)) {
+                                    // Draw a circle
+                                    circle.style.left = lineX[k] - circle.width / 2 + 'px';
+                                    circle.style.top = lineY - circle.height / 2 + 'px';
+                                    circle.style.visibility = "visible";
+
+                                    respNum = k;
+                                    
+                                    // Next button
+                                    fillRect(ctx, buttonX, buttonY, buttonW, buttonH, stimColor);
+                                    drawText(ctx, 'Next', buttonX, buttonY, "rgb(0, 0, 0)");
+                                }
+                            }
+                            
+                            // If the participant presses the next button
+                            if ((circle.style.visibility == "visible") && (buttonX - buttonW/2 < mx) && (buttonX + buttonW/2 > mx) && (buttonY - buttonH/2 < my) && (buttonY + buttonH/2 > my)){
+                                circle.style.visibility = "hidden";
+
+                                ansArray[randQuestions[m][0]] = respNum;
+                                break;
+                            }
+                        }
+
+                        await milliseconds(1); // This prevents a freeze.
+                    };
+                };
+
+                if (phase == 1) { // Save the data
+                    let trial_data = {};
+                    trial_data['participant'] = participant;
+                    trial_data['repeat'] = count+1;
+                    trial_data['trial'] = i+1;
+                    trial_data['imgFile'] = randImages[i];
+
+                    // Extract sub-strings from the file name.
+                    tmpStr = randImages[i].split("/");
+                    tmpStr = tmpStr[2].split(".");
+                    tmpStr = tmpStr[0].split("_");
+                    trial_data['first'] = tmpStr[0];
+                    trial_data['second'] = tmpStr[1];
+                    for (let l = 0; l < ansArray.length; l++) {
+                        qLabel = 'Q'+String(l+1);
+                        trial_data[qLabel] = ansArray[l];
+                    }
+
+                    writeData(trial_data);
+                    trialCnt = trialCnt + 1;
+                }
+            }
+        }
+    }
+
+    clearWindow(ctx, bgColor);
+
+    saveCSV(participant + '_' + dateFullStr);
+
+    drawText(ctx, 'The experiment finished.', centerX, centerY, stimColor);
+
+}
+
+</script>
+</head>
+<body>
+    <canvas id="mainCanvas"></canvas> 
+    <canvas id="circleID"></canvas> 
+</body>
+</html>
