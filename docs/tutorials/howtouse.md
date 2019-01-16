@@ -1,9 +1,9 @@
-This is the tutorial to use PsychWebTool. This tutorial creates an demo program which present a message, receive a key response and present a circle in your browser. Internet connection is not needed except for download, i.e. the program can run not only online but also offline.
+This is the tutorial to use PsychWebTool. This tutorial creates an demo program which presents a message, waits for a key press, and presents a circle in your browser. The program can run both in online and offline.
 
 # Download
 Please download all files from [GitHub.](https://github.com/kurokida/PsychWebTool){:target="_blank"}
 
-![download](./images/download.png)
+![download](../images/download.png)
 
 # A template html file
 This is a template html file for almost all PsychWebTool (PWT) programs. The template.html is located in the **demo** folder you downloaded. You can get started by adding your original code to the file, and need not to know the content of the file in detail.

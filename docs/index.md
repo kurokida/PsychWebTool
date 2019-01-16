@@ -4,7 +4,7 @@ The consept of the library resembles that of [jsPsych](http://www.jspsych.org/) 
 
 If you interested in core technologies which PsychWebTool is based on, please refer to [keywords: async, await, and promise](keywords.md).
 
-The PsychWebTool (PWT) was created by Daiichiro Kuroki at Kyushu University in Japan. I am preparing submitting a paper regarding this library. Until acceptance of the paper, please cite the URL: http://pwt.hes.kyushu-u.ac.jp/ if you use PsychWebTool.
+The PsychWebTool (PWT) was created by Daiichiro Kuroki at Kyushu University in Japan. I am preparing submitting a paper regarding this library. Until acceptance of the paper, please cite the URL: http://pwt.hes.kyushu-u.ac.jp/ if you use the PsychWebTool.
 
 # Tutorials
 - [The most basic sample code including the installation processes](tutorials/howtouse.md)
