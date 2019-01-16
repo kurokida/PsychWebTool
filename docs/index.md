@@ -14,7 +14,7 @@ The PsychWebTool (PWT) was created by Daiichiro Kuroki at Kyushu University in J
 # Demonstration
 There are [some demonstration programs](demo.md) in the **main** folder. These are usuful for understanding how to use PsychWebTool. 
 
-# Functions
+# [Functions](functions.md)
 
 # License
 The PWT includes the [jsPsych](http://www.jspsych.org/)  (de Leeuw, 2015) and [jQuery](https://jquery.com/) that are released under the MIT license.
