@@ -6,7 +6,7 @@ saveCSV
 getMsecs
 clearWindow
 
-##pressKey
+## pressKey
 This function pauses execution of a program, and waits for a key press. The function needs the ***await*** expression. 
 
 The arugument of the pressKey fuction is an array of key names. For example, 
